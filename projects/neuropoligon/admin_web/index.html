@@ -1,0 +1,64 @@
+<!--
+Copyright 2026 Rinat Ishmaev
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Нейрополигон — админ</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 420px; margin: 2rem auto; padding: 0 1rem; }
+    input, button { width: 100%; margin: 0.4rem 0; padding: 0.6rem; box-sizing: border-box; }
+    .msg { color: #059669; } .err { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <h1>Админ-панель</h1>
+  <p>Только веб. В Android-приложении вход администратора заблокирован.</p>
+  <label>URL backend <input id="base" value="http://localhost:8080" /></label>
+  <label>Почта админа <input id="email" type="email" /></label>
+  <label>Пароль <input id="password" type="password" /></label>
+  <button id="login">Войти</button>
+  <p id="out"></p>
+  <script>
+    const CLIENT = 'web-admin';
+    document.getElementById('login').onclick = async () => {
+      const base = document.getElementById('base').value.replace(/\/$/, '');
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const out = document.getElementById('out');
+      out.className = '';
+      try {
+        const res = await fetch(base + '/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Neuropoligon-Client': CLIENT },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || JSON.stringify(data));
+        if (data.role !== 'admin') throw new Error('Это не админ-аккаунт.');
+        localStorage.setItem('admin_token', data.token);
+        out.textContent = 'Вход выполнен. Токен сохранён в localStorage.';
+        out.className = 'msg';
+      } catch (e) {
+        out.textContent = e.message || String(e);
+        out.className = 'err';
+      }
+    };
+  </script>
+</body>
+</html>

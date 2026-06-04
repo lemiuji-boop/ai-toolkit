@@ -1,0 +1,489 @@
+{
+  "courseId": "ai_intro_for_everyone_v1",
+  "title": "Введение в ИИ-технологии",
+  "version": "1.0",
+  "language": "ru",
+  "updatedAt": "2026-06-02",
+  "targetAudience": [
+    "новички",
+    "обычные пользователи",
+    "офисные сотрудники",
+    "студенты",
+    "специалисты без программирования",
+    "начинающие разработчики"
+  ],
+  "learningModes": [
+    {
+      "id": "quick_7_days",
+      "title": "Быстрый маршрут: 7 дней",
+      "description": "Для быстрого старта и первых практических результатов"
+    },
+    {
+      "id": "standard_8_weeks",
+      "title": "Основной маршрут: 8 недель",
+      "description": "Плавное изучение с практикой и мини-проектами"
+    },
+    {
+      "id": "deep_12_weeks",
+      "title": "Глубокий маршрут: 12 недель",
+      "description": "Для перехода к автоматизации, агентам и разработке"
+    }
+  ],
+  "modules": [
+    {
+      "id": "m01",
+      "order": 1,
+      "title": "ИИ без страха: что это и зачем нужно",
+      "level": 0,
+      "estimatedMinutes": 45,
+      "summary": "Базовое понимание ИИ через простые примеры из жизни.",
+      "lessons": [
+        {
+          "id": "m01_l01",
+          "order": 1,
+          "title": "Что такое ИИ простыми словами",
+          "durationMinutes": 12,
+          "contentRef": "modules/module_01_intro.md#m01_l01",
+          "practice": {
+            "title": "Объясни одну тему тремя способами",
+            "prompt": "Объясни, что такое искусственный интеллект, тремя способами: для ребёнка 10 лет, для обычного взрослого и для специалиста. После объяснения покажи, где в жизни я уже сталкиваюсь с ИИ."
+          },
+          "quiz": [
+            {
+              "question": "ИИ всегда понимает смысл как человек?",
+              "options": ["Да", "Нет"],
+              "answerIndex": 1,
+              "explanation": "ИИ может имитировать понимание, но не обладает человеческим сознанием и может ошибаться."
+            },
+            {
+              "question": "Нужно ли проверять важные ответы ИИ?",
+              "options": ["Да", "Нет"],
+              "answerIndex": 0,
+              "explanation": "Особенно важно проверять ответы, связанные с деньгами, здоровьем, работой, правом и безопасностью."
+            }
+          ]
+        },
+        {
+          "id": "m01_l02",
+          "order": 2,
+          "title": "Где ИИ уже используется",
+          "durationMinutes": 10,
+          "contentRef": "modules/module_01_intro.md#m01_l02",
+          "practice": {
+            "title": "Найди ИИ вокруг себя",
+            "prompt": "Составь список из 10 мест, где обычный человек уже сталкивается с ИИ в телефоне, интернете, работе, транспорте и развлечениях."
+          },
+          "quiz": []
+        },
+        {
+          "id": "m01_l03",
+          "order": 3,
+          "title": "Что ИИ умеет хорошо, а что плохо",
+          "durationMinutes": 12,
+          "contentRef": "modules/module_01_intro.md#m01_l03",
+          "practice": {
+            "title": "Раздели задачи по пригодности для ИИ",
+            "prompt": "Раздели мои задачи на три группы: ИИ подходит хорошо, ИИ может помочь частично, ИИ лучше не использовать без специалиста. Объясни почему."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m02",
+      "order": 2,
+      "title": "Краткая история ИИ",
+      "level": 0,
+      "estimatedMinutes": 60,
+      "summary": "От правил и экспертных систем до машинного обучения, нейросетей и генеративного ИИ.",
+      "lessons": [
+        {
+          "id": "m02_l01",
+          "order": 1,
+          "title": "До нейросетей: мечта о думающих машинах",
+          "durationMinutes": 12,
+          "contentRef": "modules/module_02_history.md#m02_l01",
+          "practice": {
+            "title": "Правила против обучения на примерах",
+            "prompt": "Объясни разницу между программой с правилами 'если-то' и ИИ, который учится на примерах. Используй пример сортировки писем на важные и спам."
+          },
+          "quiz": []
+        },
+        {
+          "id": "m02_l02",
+          "order": 2,
+          "title": "Машинное обучение и нейросети",
+          "durationMinutes": 15,
+          "contentRef": "modules/module_02_history.md#m02_l02",
+          "practice": {
+            "title": "Построй временную шкалу",
+            "prompt": "Построй простую временную шкалу развития ИИ: правила, экспертные системы, машинное обучение, глубокое обучение, трансформеры, генеративный ИИ. Каждую эпоху объясни одной фразой."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m03",
+      "order": 3,
+      "title": "Как ИИ учится",
+      "level": 1,
+      "estimatedMinutes": 50,
+      "summary": "Данные, обучение, вывод, ошибки и ограничения моделей.",
+      "lessons": [
+        {
+          "id": "m03_l01",
+          "order": 1,
+          "title": "Данные — топливо ИИ",
+          "durationMinutes": 12,
+          "contentRef": "modules/module_03_learning.md#m03_l01",
+          "practice": {
+            "title": "Какие данные нужны?",
+            "prompt": "Я хочу, чтобы ИИ помогал с задачей: [опиши задачу]. Какие данные нужны, какие могут быть ошибки в данных и как проверить качество результата?"
+          },
+          "quiz": []
+        },
+        {
+          "id": "m03_l02",
+          "order": 2,
+          "title": "Почему ИИ ошибается",
+          "durationMinutes": 15,
+          "contentRef": "modules/module_03_learning.md#m03_l02",
+          "practice": {
+            "title": "Попроси указать неопределённость",
+            "prompt": "Ответь на вопрос, но отдельно укажи: что ты знаешь точно, что является предположением, что нужно проверить в источниках и какие ошибки возможны."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m04",
+      "order": 4,
+      "title": "Виды ИИ",
+      "level": 1,
+      "estimatedMinutes": 70,
+      "summary": "ML, компьютерное зрение, NLP, генеративный ИИ и агенты.",
+      "lessons": [
+        {
+          "id": "m04_l01",
+          "order": 1,
+          "title": "Классическое ML, зрение и язык",
+          "durationMinutes": 18,
+          "contentRef": "modules/module_04_types.md#m04_l01",
+          "practice": {
+            "title": "Подбери тип ИИ под задачу",
+            "prompt": "Для каждой задачи определи, какой тип ИИ лучше подходит: машинное обучение, компьютерное зрение, обработка языка, генеративный ИИ или агент. Объясни выбор."
+          },
+          "quiz": []
+        },
+        {
+          "id": "m04_l02",
+          "order": 2,
+          "title": "ИИ-агенты",
+          "durationMinutes": 15,
+          "contentRef": "modules/module_04_types.md#m04_l02",
+          "practice": {
+            "title": "Опиши агентную цепочку",
+            "prompt": "Опиши цепочку действий ИИ-агента для задачи: получить PDF, извлечь данные, проверить ошибки, сформировать таблицу и написать резюме. Укажи, где нужно подтверждение пользователя."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m05",
+      "order": 5,
+      "title": "Чат-боты и большие языковые модели",
+      "level": 1,
+      "estimatedMinutes": 60,
+      "summary": "Что такое LLM, контекст, ограничения и работа с диалогом.",
+      "lessons": [
+        {
+          "id": "m05_l01",
+          "order": 1,
+          "title": "Что такое LLM",
+          "durationMinutes": 15,
+          "contentRef": "modules/module_05_llm.md#m05_l01",
+          "practice": {
+            "title": "Проверь контекст",
+            "prompt": "Объясни, что ты можешь и не можешь узнать из моего сообщения. Какие данные тебе нужны, чтобы ответить точнее?"
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m06",
+      "order": 6,
+      "title": "Промтинг",
+      "level": 1,
+      "estimatedMinutes": 90,
+      "summary": "Как задавать ИИ понятные инструкции и улучшать ответы итерациями.",
+      "lessons": [
+        {
+          "id": "m06_l01",
+          "order": 1,
+          "title": "Формула хорошего промта",
+          "durationMinutes": 20,
+          "contentRef": "modules/module_06_prompting.md#m06_l01",
+          "practice": {
+            "title": "Собери хороший промт",
+            "prompt": "Ты — [роль]. Задача: [что сделать]. Контекст: [ситуация]. Формат ответа: [формат]. Критерии качества: [критерии]. Ограничения: [ограничения]. Перед финальным ответом проверь пропуски."
+          },
+          "quiz": []
+        },
+        {
+          "id": "m06_l02",
+          "order": 2,
+          "title": "Итерационное улучшение ответа",
+          "durationMinutes": 15,
+          "contentRef": "modules/module_06_prompting.md#m06_l02",
+          "practice": {
+            "title": "Черновик → критика → улучшение",
+            "prompt": "Сначала дай черновик. Затем перечисли слабые места. После этого предложи улучшенную версию."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m07",
+      "order": 7,
+      "title": "ИИ для текста, документов и поиска",
+      "level": 2,
+      "estimatedMinutes": 80,
+      "summary": "Черновики, редактирование, суммаризация, извлечение фактов и проверка источников.",
+      "lessons": [
+        {
+          "id": "m07_l01",
+          "order": 1,
+          "title": "Редактирование и документы",
+          "durationMinutes": 18,
+          "contentRef": "modules/module_07_documents.md#m07_l01",
+          "practice": {
+            "title": "Анализ документа",
+            "prompt": "Проанализируй документ и выдай: краткое резюме, ключевые факты, даты, ответственных, риски, вопросы и таблицу действий. Не добавляй факты, которых нет в документе."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m08",
+      "order": 8,
+      "title": "ИИ для изображений, голоса и видео",
+      "level": 2,
+      "estimatedMinutes": 75,
+      "summary": "Генерация изображений, озвучка, расшифровка аудио и storyboard для видео.",
+      "lessons": [
+        {
+          "id": "m08_l01",
+          "order": 1,
+          "title": "Промт для изображения",
+          "durationMinutes": 15,
+          "contentRef": "modules/module_08_media.md#m08_l01",
+          "practice": {
+            "title": "Создай визуальный промт",
+            "prompt": "Создай изображение: [объект]. Стиль: [стиль]. Композиция: [ракурс]. Освещение: [свет]. Настроение: [настроение]. Ограничения: без текста, без логотипов, без лишних объектов."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m09",
+      "order": 9,
+      "title": "ИИ для работы, учёбы и быта",
+      "level": 2,
+      "estimatedMinutes": 90,
+      "summary": "Практические сценарии применения ИИ в ежедневных задачах.",
+      "lessons": [
+        {
+          "id": "m09_l01",
+          "order": 1,
+          "title": "ИИ-наставник для обучения",
+          "durationMinutes": 15,
+          "contentRef": "modules/module_09_work_life.md#m09_l01",
+          "practice": {
+            "title": "Наставник маленькими шагами",
+            "prompt": "Будь моим наставником по теме [тема]. Обучай меня маленькими шагами. Не давай следующую тему, пока я не отвечу на вопрос. Если я ошибусь, объясни спокойно и дай аналогию."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m10",
+      "order": 10,
+      "title": "Автоматизация и ИИ-агенты",
+      "level": 3,
+      "estimatedMinutes": 80,
+      "summary": "Как переходить от разовых запросов к цепочкам действий и агентным системам.",
+      "lessons": [
+        {
+          "id": "m10_l01",
+          "order": 1,
+          "title": "Обычный чат против агента",
+          "durationMinutes": 18,
+          "contentRef": "modules/module_10_agents.md#m10_l01",
+          "practice": {
+            "title": "Проект агентной цепочки",
+            "prompt": "Спроектируй ИИ-агента для задачи [задача]. Укажи цель, входные данные, инструменты, шаги, проверки, риски и места, где нужно подтверждение пользователя."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m11",
+      "order": 11,
+      "title": "Локальные модели, облачные сервисы и API",
+      "level": 3,
+      "estimatedMinutes": 90,
+      "summary": "Когда использовать облачный ИИ, локальные модели и API.",
+      "lessons": [
+        {
+          "id": "m11_l01",
+          "order": 1,
+          "title": "Облако, локальный запуск и API",
+          "durationMinutes": 20,
+          "contentRef": "modules/module_11_local_api.md#m11_l01",
+          "practice": {
+            "title": "Сравни варианты запуска",
+            "prompt": "Сравни облачный ИИ, локальную модель и API для моей задачи: [задача]. Укажи плюсы, минусы, риски приватности, стоимость и сложность."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m12",
+      "order": 12,
+      "title": "Ошибки, галлюцинации, проверка и безопасность",
+      "level": 2,
+      "estimatedMinutes": 75,
+      "summary": "Как проверять ответы ИИ и защищать данные.",
+      "lessons": [
+        {
+          "id": "m12_l01",
+          "order": 1,
+          "title": "Галлюцинации и проверка",
+          "durationMinutes": 20,
+          "contentRef": "modules/module_12_safety.md#m12_l01",
+          "practice": {
+            "title": "Ответ только по данным",
+            "prompt": "Отвечай только на основе предоставленного текста. Если ответа в тексте нет, напиши: 'в предоставленных данных этого нет'. Не додумывай."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m13",
+      "order": 13,
+      "title": "Этика, право, приватность и ответственность",
+      "level": 2,
+      "estimatedMinutes": 60,
+      "summary": "Ответственное применение ИИ, авторское право, приватность и ограничения.",
+      "lessons": [
+        {
+          "id": "m13_l01",
+          "order": 1,
+          "title": "Ответственное применение ИИ",
+          "durationMinutes": 18,
+          "contentRef": "modules/module_13_ethics.md#m13_l01",
+          "practice": {
+            "title": "Оцени риск использования ИИ",
+            "prompt": "Оцени сценарий использования ИИ: [сценарий]. Укажи пользу, риски, какие данные затрагиваются, нужна ли проверка специалиста и как снизить риск."
+          },
+          "quiz": []
+        }
+      ]
+    },
+    {
+      "id": "m14",
+      "order": 14,
+      "title": "Финальный проект: личная карта применения ИИ",
+      "level": 3,
+      "estimatedMinutes": 120,
+      "summary": "Пользователь собирает собственную систему применения ИИ в быту, работе или учёбе.",
+      "lessons": [
+        {
+          "id": "m14_l01",
+          "order": 1,
+          "title": "Моя личная система ИИ",
+          "durationMinutes": 45,
+          "contentRef": "modules/module_14_final_project.md#m14_l01",
+          "practice": {
+            "title": "Собери карту применения ИИ",
+            "prompt": "Помоги мне составить личную карту применения ИИ. Сначала задай вопросы о моих задачах, потом предложи 3 сценария: простой, рабочий и творческий/обучающий. Для каждого дай промт, риски и способ проверки результата."
+          },
+          "quiz": []
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Elements of AI",
+      "url": "https://www.elementsofai.com/",
+      "level": 0,
+      "type": "course"
+    },
+    {
+      "title": "DeepLearning.AI — AI for Everyone",
+      "url": "https://www.deeplearning.ai/courses/ai-for-everyone/",
+      "level": 0,
+      "type": "course"
+    },
+    {
+      "title": "Google Machine Learning Crash Course",
+      "url": "https://developers.google.com/machine-learning/crash-course",
+      "level": 2,
+      "type": "course"
+    },
+    {
+      "title": "Kaggle Intro to Machine Learning",
+      "url": "https://www.kaggle.com/learn/intro-to-machine-learning",
+      "level": 2,
+      "type": "practice"
+    },
+    {
+      "title": "Hugging Face LLM Course",
+      "url": "https://huggingface.co/learn/llm-course/en/chapter1/1",
+      "level": 3,
+      "type": "course"
+    },
+    {
+      "title": "OpenAI Prompt Engineering Guide",
+      "url": "https://developers.openai.com/api/docs/guides/prompt-engineering",
+      "level": 1,
+      "type": "guide"
+    },
+    {
+      "title": "NIST AI Risk Management Framework",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "level": 3,
+      "type": "safety"
+    },
+    {
+      "title": "Android App Architecture",
+      "url": "https://developer.android.com/topic/architecture",
+      "level": 4,
+      "type": "android"
+    },
+    {
+      "title": "Jetpack Compose",
+      "url": "https://developer.android.com/compose",
+      "level": 4,
+      "type": "android"
+    },
+    {
+      "title": "Android Window Size Classes",
+      "url": "https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes",
+      "level": 4,
+      "type": "android"
+    }
+  ]
+}

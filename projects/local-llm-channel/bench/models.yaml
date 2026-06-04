@@ -1,0 +1,75 @@
+# Copyright 2026 Rinat Ishmaev
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+models:
+  - name: Llama 3.2 3B
+    ollama_tag: llama3.2:3b
+    params_b: 3.0
+    quant: Q4_K_M
+    family: llama
+    est_vram_gb: 2.8
+    fits_6gb: yes
+    context_max: 8192
+    modality: text
+    license: Llama
+  - name: Qwen3 4B
+    ollama_tag: qwen3:4b
+    params_b: 4.0
+    quant: Q4_K_M
+    family: qwen3
+    est_vram_gb: 3.2
+    fits_6gb: yes
+    context_max: 8192
+    modality: text
+    license: Apache-2.0
+  - name: Gemma 3 4B
+    ollama_tag: gemma3:4b
+    params_b: 4.0
+    quant: Q4_K_M
+    family: gemma
+    est_vram_gb: 3.5
+    fits_6gb: yes
+    context_max: 8192
+    modality: vision
+    license: Gemma
+  - name: Phi-4-mini
+    ollama_tag: phi4-mini
+    params_b: 3.8
+    quant: Q4_K_M
+    family: phi
+    est_vram_gb: 3.0
+    fits_6gb: yes
+    context_max: 8192
+    modality: text
+    license: MIT
+  - name: Qwen2.5-Coder 3B
+    ollama_tag: qwen2.5-coder:3b
+    params_b: 3.0
+    quant: Q4_K_M
+    family: qwen
+    est_vram_gb: 2.5
+    fits_6gb: yes
+    context_max: 8192
+    modality: code
+    license: Apache-2.0
+  - name: Qwen3 8B
+    ollama_tag: qwen3:8b
+    params_b: 8.0
+    quant: Q4_K_M
+    family: qwen3
+    est_vram_gb: 5.2
+    fits_6gb: tight
+    context_max: 4096
+    modality: text
+    license: Apache-2.0

@@ -1,0 +1,218 @@
+{
+  "resources": [
+    {
+      "id": "a1111",
+      "name": "Stable Diffusion WebUI",
+      "category": "Генерация изображений/медиа",
+      "whatItIs": "Классический WebUI.",
+      "useFor": "Генерация картинок.",
+      "officialUrl": "https://github.com/AUTOMATIC1111/stable-diffusion-webui"
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic Claude",
+      "category": "Облачные модели/API",
+      "whatItIs": "Семейство моделей Claude.",
+      "useFor": "Текст, рассуждения, агенты.",
+      "officialUrl": "https://www.anthropic.com",
+      "docsUrl": "https://docs.claude.com"
+    },
+    {
+      "id": "colab",
+      "name": "Google Colab",
+      "category": "Обучение/эксперименты",
+      "whatItIs": "Ноутбуки с GPU.",
+      "useFor": "Обучение моделей.",
+      "officialUrl": "https://colab.research.google.com"
+    },
+    {
+      "id": "comfyui",
+      "name": "ComfyUI",
+      "category": "Генерация изображений/медиа",
+      "whatItIs": "Нодовый UI для диффузии.",
+      "useFor": "Stable Diffusion, FLUX.",
+      "officialUrl": "https://www.comfy.org",
+      "docsUrl": "https://docs.comfy.org"
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "category": "Инструменты разработчика",
+      "whatItIs": "AI-редактор кода.",
+      "useFor": "Разработка с агентом.",
+      "officialUrl": "https://cursor.com",
+      "docsUrl": "https://cursor.com/learn"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "category": "Облачные модели/API",
+      "whatItIs": "Китайская LLM с сильным кодом.",
+      "useFor": "Чат и код (не из браузера).",
+      "officialUrl": "https://www.deepseek.com"
+    },
+    {
+      "id": "gemini",
+      "name": "Google Gemini",
+      "category": "Облачные модели/API",
+      "whatItIs": "Модели Google.",
+      "useFor": "Текст и мультимодальность.",
+      "officialUrl": "https://gemini.google.com",
+      "docsUrl": "https://ai.google.dev"
+    },
+    {
+      "id": "google_responsible_ai",
+      "name": "Responsible Generative AI Toolkit",
+      "category": "Безопасность и качество",
+      "whatItIs": "Руководства Google по безопасному проектированию и оценке генеративного ИИ",
+      "useFor": "evals, safeguards и прозрачность",
+      "officialUrl": "https://ai.google.dev/responsible"
+    },
+    {
+      "id": "gpt4all",
+      "name": "GPT4All",
+      "category": "Локальный запуск",
+      "whatItIs": "Локальные модели от Nomic.",
+      "useFor": "Десктоп офлайн.",
+      "officialUrl": "https://www.nomic.ai/gpt4all"
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "category": "Облачные модели/API",
+      "whatItIs": "Быстрый инференс LPU.",
+      "useFor": "Низкая задержка API.",
+      "officialUrl": "https://groq.com"
+    },
+    {
+      "id": "hf",
+      "name": "Hugging Face",
+      "category": "Хабы и датасеты",
+      "whatItIs": "Хаб моделей и данных.",
+      "useFor": "Скачивание и дообучение.",
+      "officialUrl": "https://huggingface.co",
+      "docsUrl": "https://huggingface.co/docs"
+    },
+    {
+      "id": "jan",
+      "name": "Jan",
+      "category": "Локальный запуск",
+      "whatItIs": "Локальный чат-клиент.",
+      "useFor": "Приватный чат.",
+      "officialUrl": "https://jan.ai"
+    },
+    {
+      "id": "kaggle",
+      "name": "Kaggle",
+      "category": "Обучение/эксперименты",
+      "whatItIs": "Соревнования и GPU.",
+      "useFor": "Датасеты и обучение.",
+      "officialUrl": "https://www.kaggle.com"
+    },
+    {
+      "id": "langchain",
+      "name": "LangChain",
+      "category": "Инструменты разработчика",
+      "whatItIs": "Фреймворк LLM-приложений.",
+      "useFor": "Цепочки и агенты.",
+      "officialUrl": "https://www.langchain.com"
+    },
+    {
+      "id": "llamacpp",
+      "name": "llama.cpp",
+      "category": "Локальный запуск",
+      "whatItIs": "Низкоуровневый движок.",
+      "useFor": "CPU/GPU инференс.",
+      "officialUrl": "https://github.com/ggml-org/llama.cpp"
+    },
+    {
+      "id": "lmstudio",
+      "name": "LM Studio",
+      "category": "Локальный запуск",
+      "whatItIs": "GUI для локальных LLM.",
+      "useFor": "Выбор и запуск моделей.",
+      "officialUrl": "https://lmstudio.ai"
+    },
+    {
+      "id": "mcp_docs",
+      "name": "Model Context Protocol",
+      "category": "Агенты и интеграции",
+      "whatItIs": "Официальная документация протокола подключения контекста и инструментов",
+      "useFor": "создание и аудит MCP-интеграций",
+      "officialUrl": "https://modelcontextprotocol.io/"
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral AI",
+      "category": "Облачные модели/API",
+      "whatItIs": "Европейские open/commercial LLM.",
+      "useFor": "Чат и API.",
+      "officialUrl": "https://mistral.ai"
+    },
+    {
+      "id": "nist_ai_rmf",
+      "name": "NIST AI Risk Management Framework",
+      "category": "Безопасность и качество",
+      "whatItIs": "Практический фреймворк управления рисками ИИ",
+      "useFor": "проверка надежности и рисков",
+      "officialUrl": "https://www.nist.gov/itl/ai-risk-management-framework"
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama",
+      "category": "Локальный запуск",
+      "whatItIs": "Локальный сервер моделей.",
+      "useFor": "Офлайн и приватность.",
+      "officialUrl": "https://ollama.com"
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "category": "Облачные модели/API",
+      "whatItIs": "GPT и платформа API.",
+      "useFor": "Чат, код, мультимодальность.",
+      "officialUrl": "https://openai.com",
+      "docsUrl": "https://platform.openai.com"
+    },
+    {
+      "id": "replicate",
+      "name": "Replicate",
+      "category": "Генерация изображений/медиа",
+      "whatItIs": "API для моделей.",
+      "useFor": "Облачный запуск.",
+      "officialUrl": "https://replicate.com"
+    },
+    {
+      "id": "stability",
+      "name": "Stability AI",
+      "category": "Генерация изображений/медиа",
+      "whatItIs": "Компания SD.",
+      "useFor": "Модели изображений.",
+      "officialUrl": "https://stability.ai"
+    },
+    {
+      "id": "together",
+      "name": "Together AI",
+      "category": "Облачные модели/API",
+      "whatItIs": "Хостинг open-моделей.",
+      "useFor": "Эксперименты с LLM.",
+      "officialUrl": "https://www.together.ai"
+    },
+    {
+      "id": "unesco_ai_competency",
+      "name": "UNESCO AI Competency Framework",
+      "category": "Обучение и этика",
+      "whatItIs": "Рамка компетенций безопасного и осмысленного применения ИИ",
+      "useFor": "построение личного маршрута развития",
+      "officialUrl": "https://www.unesco.org/en/digital-education/ai-future-learning/competency-frameworks"
+    },
+    {
+      "id": "xai",
+      "name": "xAI Grok",
+      "category": "Облачные модели/API",
+      "whatItIs": "Модели xAI.",
+      "useFor": "Чат.",
+      "officialUrl": "https://x.ai"
+    }
+  ]
+}

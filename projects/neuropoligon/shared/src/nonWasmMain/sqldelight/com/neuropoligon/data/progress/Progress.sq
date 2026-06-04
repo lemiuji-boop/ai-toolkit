@@ -1,0 +1,86 @@
+-- Copyright 2026 Rinat Ishmaev
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
+CREATE TABLE completed_block (
+    block_id TEXT NOT NULL PRIMARY KEY,
+    track_id TEXT NOT NULL,
+    module_id TEXT NOT NULL,
+    completed_at INTEGER NOT NULL
+);
+
+CREATE TABLE challenge_result (
+    challenge_id TEXT NOT NULL PRIMARY KEY,
+    passed INTEGER NOT NULL,
+    feedback TEXT NOT NULL,
+    completed_at INTEGER NOT NULL
+);
+
+CREATE TABLE user_note (
+    note_id TEXT NOT NULL PRIMARY KEY,
+    concept_id TEXT NOT NULL,
+    text TEXT NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE repetition_card (
+    concept_id TEXT NOT NULL PRIMARY KEY,
+    interval_days INTEGER NOT NULL,
+    ease_factor REAL NOT NULL,
+    repetitions INTEGER NOT NULL,
+    next_review_at INTEGER NOT NULL
+);
+
+CREATE TABLE user_preference (
+    pref_key TEXT NOT NULL PRIMARY KEY,
+    pref_value TEXT NOT NULL
+);
+
+selectAllCompleted:
+SELECT * FROM completed_block;
+
+insertCompleted:
+INSERT OR REPLACE INTO completed_block(block_id, track_id, module_id, completed_at)
+VALUES (?, ?, ?, ?);
+
+selectChallenge:
+SELECT * FROM challenge_result WHERE challenge_id = ?;
+
+insertChallenge:
+INSERT OR REPLACE INTO challenge_result(challenge_id, passed, feedback, completed_at)
+VALUES (?, ?, ?, ?);
+
+selectAllCards:
+SELECT * FROM repetition_card;
+
+insertCard:
+INSERT OR REPLACE INTO repetition_card(concept_id, interval_days, ease_factor, repetitions, next_review_at)
+VALUES (?, ?, ?, ?, ?);
+
+selectPreference:
+SELECT pref_value FROM user_preference WHERE pref_key = ?;
+
+upsertPreference:
+INSERT OR REPLACE INTO user_preference(pref_key, pref_value) VALUES (?, ?);
+
+selectDueCards:
+SELECT * FROM repetition_card WHERE next_review_at <= ?;
+
+selectAllNotes:
+SELECT * FROM user_note ORDER BY updated_at DESC;
+
+upsertNote:
+INSERT OR REPLACE INTO user_note(note_id, concept_id, text, updated_at) VALUES (?, ?, ?, ?);
+
+deleteNote:
+DELETE FROM user_note WHERE note_id = ?;

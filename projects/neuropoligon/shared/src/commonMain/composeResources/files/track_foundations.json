@@ -1,0 +1,371 @@
+{
+  "tracks": [
+    {
+      "id": "foundations",
+      "title": "Пошаговый курс по ИИ: от азов к практике",
+      "description": "Линейный курс: каждый урок продолжает предыдущий. Термины раскрываются по нажатию прямо в тексте.",
+      "requiresApiKey": false,
+      "minLevel": "zero",
+      "modules": [
+        {
+          "id": "intro-course",
+          "title": "Урок 0. Ознакомление: как проходить курс",
+          "minLevel": "zero",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Это ознакомительный урок. Как учиться в Нейрополигоне:\n\n1) Откройте теорию и прочитайте основные идеи;\n2) Нажимайте на выделенные [[термин|термины]] — откроется понятная выноска;\n3) Выполните блок «Практика»;\n4) Нажмите «Проверить себя»;\n5) Перейдите к следующему уроку.\n\nСсылки на ресурсы встроены прямо в текст: [Как работают LLM](https://developers.google.com/machine-learning/resources).\n\nЕсли нужно сохранить формулировки — используйте кнопку «Скопировать текст урока».",
+                "advanced": "Рекомендуемый ритм: theory -> sandbox -> challenge -> reflection. Для устойчивого прогресса держите короткий цикл обратной связи и фиксируйте заметки после каждого модуля."
+              },
+              "coreForAll": true
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "tokenizer",
+              "config": {}
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-intro",
+                "title": "Проверка: вы готовы к курсу",
+                "description": "Введите любой короткий текст в практику и убедитесь, что получили результат.",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "temperature",
+                  "operator": "<=",
+                  "value": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "tokenization",
+          "title": "Урок 1. Как модель читает текст",
+          "minLevel": "zero",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Добро пожаловать в курс. Начнем с ключевой идеи: модель не видит текст как человек. Она видит последовательность [[токен|токенов]].\n\nПример: фраза «Я люблю машинное обучение» может быть разбита на несколько кусочков. Иногда одно слово = один токен, а иногда слово разбивается на части.\n\nПочему это важно:\n1) токены влияют на цену и скорость;\n2) токены ограничивают [[контекст|контекстное окно]];\n3) точная формулировка запроса меняет ответ.\n\nПолезное чтение: [Официальный гайд OpenAI по токенам](https://platform.openai.com/tokenizer).",
+                "advanced": "Токенизация (BPE/WordPiece) минимизирует словарь за счет частых слияний. При проектировании prompt-пайплайна учитывайте границу чанков, частотные subword-паттерны и влияние токен-бюджета на retrieval-depth."
+              },
+              "coreForAll": true
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "tokenizer",
+              "config": {}
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-token-count",
+                "title": "Мини-проверка: понимание токенов",
+                "description": "Введите короткую фразу и убедитесь, что видите разбиение на токены. Затем нажмите «Проверить себя».",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "temperature",
+                  "operator": "<=",
+                  "value": 1.0
+                }
+              }
+            },
+            {
+              "type": "codeRecipe",
+              "language": "kotlin",
+              "code": "val tokens = tokenizer.tokenize(\"Привет, мир!\")\nprintln(tokens.joinToString())",
+              "note": "Практический мостик: то же поведение в коде без сети и API-ключей."
+            }
+          ]
+        },
+        {
+          "id": "embeddings",
+          "title": "Урок 2. Эмбеддинги и смысловое пространство",
+          "minLevel": "zero",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "[[эмбеддинг]] — это числовой «адрес смысла». Слова с похожим смыслом лежат рядом на карте.\n\nНапример, «кот», «кошка», «питомец» обычно будут ближе друг к другу, чем к слову «двигатель».\n\nЗачем это нужно в реальных системах:\n- semantic-поиск;\n- [[rag|RAG]];\n- кластеризация тем.\n\nПолезное чтение: [Hugging Face: embeddings](https://huggingface.co/docs).",
+                "advanced": "Векторные представления опираются на распределительную гипотезу. Для retrieval-контуров критичны нормализация, metric choice (cosine/dot/euclidean), dimensionality tradeoff и drift мониторинг."
+              }
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "embedding",
+              "config": {}
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-embed",
+                "title": "Мини-проверка: ближайшие соседи",
+                "description": "Введите слово и сравните 3 ближайших соседа. Убедитесь, что похожие термины идут рядом.",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "temperature",
+                  "operator": "<=",
+                  "value": 0.2
+                }
+              }
+            },
+            {
+              "type": "codeRecipe",
+              "language": "python",
+              "code": "vec = model.encode('кот')\nprint(nearest(vec, k=5))",
+              "note": "Практика для production: перенос идеи в python-пайплайн."
+            }
+          ]
+        },
+        {
+          "id": "next-token",
+          "title": "Урок 3. Температура, предсказание и управляемость ответа",
+          "minLevel": "beginner",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Теперь ключевая мысль: модель каждый шаг выбирает следующий [[токен]].\n\nПараметр [[температура]] помогает управлять стилем:\n- низкая (0.1–0.3): точнее и стабильнее;\n- средняя (0.5–0.8): баланс;\n- высокая (1.0+): креативнее, но больше шума.\n\nПолезное чтение: [Anthropic docs](https://docs.claude.com).",
+                "advanced": "Декодирование: softmax(logits / T), top-p truncation и sequence-level entropy контролируют разброс. Для агентных цепочек рекомендуется lower-T на planning шагах и moderated-T на drafting."
+              }
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "temperature",
+              "config": { "prompt": "Продолжи: Искусственный интеллект — это" }
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-temp",
+                "title": "Мини-проверка: контроль детерминизма",
+                "description": "Запустите генерацию с temperature ≤ 0.2 и сравните стабильность ответа.",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "temperature",
+                  "operator": "<=",
+                  "value": 0.2
+                }
+              }
+            },
+            {
+              "type": "codeRecipe",
+              "language": "kotlin",
+              "code": "val response = client.complete(AiRequest(temperature = 0.1, ...))",
+              "note": "Финальный мостик: в боевом API задавайте температуру под тип задачи."
+            }
+          ]
+        },
+        {
+          "id": "top-p-control",
+          "title": "Урок 4. Top-p и вероятностный коридор",
+          "minLevel": "beginner",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Если температура задает «насколько смело» генерировать, то [[top-p]] задает «сколько вариантов брать в расчет».\n\nПростая эвристика:\n- важные ответы: lower top-p;\n- творческие тексты: higher top-p.\n\nПрактическая заметка: [OpenAI sampling guide](https://platform.openai.com/docs).",
+                "advanced": "Nucleus sampling ограничивает хвост распределения и стабилизирует генерацию на long-form ответах, снижая вероятность редких шумовых токенов."
+              }
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "topP",
+              "config": { "prompt": "Объясни разницу between temperature и top-p простыми словами." }
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-top-p",
+                "title": "Мини-проверка: настройка top-p",
+                "description": "Для более стабильного ответа установите top-p ≤ 0.7",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "topP",
+                  "operator": "<=",
+                  "value": 0.7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "system-role",
+          "title": "Урок 5. Сила системного промпта",
+          "minLevel": "beginner",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Системный промпт задает роль и правила ответа модели. Это фундамент [[guardrails|ограничений поведения]].\n\nХороший системный промпт:\n1) явно задает роль;\n2) фиксирует стиль;\n3) описывает запреты.\n\nПолезное чтение: [Prompting Guide](https://www.promptingguide.ai).",
+                "advanced": "System layer формирует приоритетный policy-контур. Для production-агентов критична декомпозиция на role policy, safety policy и output contract."
+              }
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "systemPrompt",
+              "config": { "prompt": "Ты наставник по ИИ: объясняй коротко, с примерами." }
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-system",
+                "title": "Мини-проверка: четкая роль",
+                "description": "Попросите модель ответить в роли наставника и оцените структуру ответа.",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "temperature",
+                  "operator": "<=",
+                  "value": 0.4
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "rag-basics",
+          "title": "Урок 6. RAG: ответ с опорой на документы",
+          "minLevel": "beginner",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "[[rag|RAG]] = модель + поиск по вашим документам. Сначала находим релевантные фрагменты, потом генерируем ответ с опорой на них.\n\nЭто снижает «галлюцинации» и повышает проверяемость.\n\nПолезное чтение: [LangChain RAG concepts](https://python.langchain.com/docs/concepts/rag).",
+                "advanced": "RAG-пайплайн включает ingest/chunking/indexing/retrieval/reranking/generation. Ключевая метрика — groundedness и citation fidelity."
+              }
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "rag",
+              "config": {
+                "prompt": "Коротко объясни что такое RAG и чем он полезен бизнесу.",
+                "documents": [
+                  "RAG соединяет retrieval и generation.",
+                  "Поиск релевантных фрагментов уменьшает вероятность выдуманных фактов.",
+                  "Ответы с источниками проще проверять и валидировать."
+                ]
+              }
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-rag",
+                "title": "Мини-проверка: grounded-ответ",
+                "description": "Сформируйте ответ так, чтобы он опирался на документы и был кратким.",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "temperature",
+                  "operator": "<=",
+                  "value": 0.3
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "functions",
+          "title": "Урок 7. Function Calling и действие по правилам",
+          "minLevel": "beginner",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Function Calling помогает модели не просто «болтать», а вызывать заранее разрешенные действия.\n\nПример: получить погоду, проверить заказ, создать задачу.\n\nЭто важная часть [[agentic|агентных]] систем.",
+                "advanced": "Tool invocation снижает ambiguity между natural language intent и executable API call. Нужны строгие schemas, retries и idempotency."
+              }
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "functionCalling",
+              "config": { "prompt": "Определи, когда нужно вызвать функцию checkOrderStatus(orderId)." }
+            }
+          ]
+        },
+        {
+          "id": "agents",
+          "title": "Урок 8. Агентный подход: планируй, действуй, проверяй",
+          "minLevel": "beginner",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Агент — это модель, которая умеет планировать шаги, выполнять инструменты и проверять результат.\n\nБазовый цикл:\n1) понять цель;\n2) разбить на шаги;\n3) выполнить шаги;\n4) оценить качество.",
+                "advanced": "Agent loop требует явной state-модели, budget control и termination criteria. Иначе растут cost и latency."
+              }
+            },
+            {
+              "type": "sandbox",
+              "sandboxType": "agent",
+              "config": { "prompt": "Составь план обучения новичка ИИ на 7 дней с ежедневной практикой." }
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-agent",
+                "title": "Мини-проверка: структурный план",
+                "description": "Проверьте, что план разбит на шаги и содержит критерии проверки.",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "temperature",
+                  "operator": "<=",
+                  "value": 0.7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "evaluation",
+          "title": "Урок 9. Оценка качества: метрики и ручная проверка",
+          "minLevel": "beginner",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Хороший AI-функционал всегда проверяется. Сочетайте авто-метрики и ручную экспертную оценку.\n\nБазовые критерии:\n- точность;\n- полезность;\n- безопасность;\n- стабильность.",
+                "advanced": "Eval stack: offline benchmark + online telemetry + human review. Для prompt-изменений обязателен regression harness."
+              }
+            },
+            {
+              "type": "codeRecipe",
+              "language": "python",
+              "code": "def score_answer(answer: str) -> float:\n    # Простая эвристика для демо\n    return 1.0 if len(answer.strip()) > 40 else 0.4",
+              "note": "Мини-идея: оценка ответа как первый шаг перед полноценным eval-пайплайном."
+            }
+          ]
+        },
+        {
+          "id": "safety",
+          "title": "Урок 10. Безопасность и этика AI-продукта",
+          "minLevel": "beginner",
+          "blocks": [
+            {
+              "type": "explanation",
+              "markdownByLevel": {
+                "zero": "Последний шаг — безопасность. В реальном продукте вы обязаны снижать риски: токсичность, утечки данных, вредные инструкции.\n\nНужны фильтры ввода/вывода, прозрачные правила и журнал инцидентов.\n\nРекомендуем: [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/).",
+                "advanced": "LLM safety architecture строится слоями: input sanitization, policy enforcement, tool sandboxing, output moderation, audit trail."
+              }
+            },
+            {
+              "type": "challenge",
+              "challenge": {
+                "id": "ch-safety",
+                "title": "Финальная проверка",
+                "description": "Сформулируйте 3 правила безопасного использования AI-функции.",
+                "criterion": {
+                  "type": "sandboxParam",
+                  "paramName": "temperature",
+                  "operator": "<=",
+                  "value": 0.6
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

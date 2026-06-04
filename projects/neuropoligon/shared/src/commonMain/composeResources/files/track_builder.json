@@ -1,0 +1,30 @@
+{
+  "tracks": [{
+    "id": "builder",
+    "title": "Сборка",
+    "description": "Мини-чат с провайдером и инструментом.",
+    "requiresApiKey": true,
+    "minLevel": "advanced",
+    "modules": [{
+      "id": "mini-chat",
+      "title": "Мини-приложение",
+      "blocks": [{
+        "type": "explanation",
+        "markdown": "Соберите чат: выбор провайдера, ключ, один tool — как в Function Calling."
+      }, {
+        "type": "sandbox",
+        "sandboxType": "functionCalling",
+        "config": {}
+      }, {
+        "type": "sandbox",
+        "sandboxType": "agent",
+        "config": {}
+      }, {
+        "type": "codeRecipe",
+        "language": "kotlin",
+        "code": "val client: AiClient = koinInject()\nval result = client.complete(AiRequest(provider = AiProvider.Local, ...))",
+        "note": "Полный рецепт мульти-провайдер чата."
+      }]
+    }]
+  }]
+}

@@ -1,0 +1,31 @@
+{
+  "tracks": [{
+    "id": "local_ai",
+    "title": "Локальные ИИ",
+    "description": "Приватность, офлайн, Ollama и квантование.",
+    "requiresApiKey": false,
+    "minLevel": "beginner",
+    "modules": [{
+      "id": "why-local",
+      "title": "Зачем локально",
+      "blocks": [{
+        "type": "explanation",
+        "markdownByLevel": {
+          "zero": "Локальные модели не отправляют текст в облако — это [[приватность]] и контроль.",
+          "advanced": "Trade-off: VRAM, скорость, качество vs облачные frontier-модели."
+        }
+      }]
+    }, {
+      "id": "tools",
+      "title": "Инструменты",
+      "blocks": [{
+        "type": "explanation",
+        "markdown": "[[Ollama]] — CLI и OpenAI-совместимый API на localhost:11434. LM Studio — GUI. llama.cpp — низкий уровень."
+      }, {
+        "type": "sandbox",
+        "sandboxType": "systemPrompt",
+        "config": { "prompt": "Объясни, как подключить локальный Ollama к приложению." }
+      }]
+    }]
+  }]
+}

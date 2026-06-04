@@ -1,0 +1,25 @@
+{
+  "tracks": [{
+    "id": "finetuning",
+    "title": "Дообучение и адаптация",
+    "description": "RAG vs fine-tuning, LoRA, этика.",
+    "requiresApiKey": false,
+    "minLevel": "intermediate",
+    "modules": [{
+      "id": "rag-vs-ft",
+      "title": "RAG vs дообучение",
+      "blocks": [{
+        "type": "explanation",
+        "markdown": "[[RAG]] — дёшево и быстро. [[LoRA]] — меняет поведение модели, нужны данные."
+      }]
+    }, {
+      "id": "prompt-first",
+      "title": "Промпт-инжиниринг",
+      "blocks": [{
+        "type": "sandbox",
+        "sandboxType": "systemPrompt",
+        "config": {}
+      }]
+    }]
+  }]
+}

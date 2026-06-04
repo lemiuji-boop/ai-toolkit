@@ -1,0 +1,20 @@
+{
+  "tracks": [{
+    "id": "model_picker",
+    "title": "Выбор модели под задачу",
+    "description": "Какой инструмент для какой задачи.",
+    "requiresApiKey": false,
+    "minLevel": "intermediate",
+    "modules": [{
+      "id": "navigator",
+      "title": "Навигатор моделей",
+      "blocks": [{
+        "type": "explanation",
+        "markdownByLevel": {
+          "zero": "| Задача | Модель | Где |\n| Текст | [[LLM]] | облако или Ollama |\n| Код | LLM + Cursor | оба |\n| Картинки | SD/FLUX | ComfyUI локально |",
+          "advanced": "Подбирайте embedding-модели для RAG, ASR/TTS отдельно от чата."
+        }
+      }]
+    }]
+  }]
+}
