@@ -47,9 +47,12 @@ class OllamaClient:
         self.base_url = (base_url or settings.ollama_base_url).rstrip("/")
 
     async def health(self) -> bool:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            r = await client.get(f"{self.base_url}/api/tags")
-            return r.status_code == 200
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                r = await client.get(f"{self.base_url}/api/tags")
+                return r.status_code == 200
+        except httpx.HTTPError:
+            return False
 
     async def list_models(self) -> list[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:
