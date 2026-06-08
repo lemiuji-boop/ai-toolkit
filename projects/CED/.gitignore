@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
+node_modules/
+web_client/dist/
+ai_agent/models/
+build/windows/tunnel/id_ed25519
+build/windows/tunnel/*.ppk

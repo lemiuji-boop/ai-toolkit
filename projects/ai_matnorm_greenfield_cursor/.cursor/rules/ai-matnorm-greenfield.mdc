@@ -1,0 +1,18 @@
+---
+description: Core rules for AI-МАТНОРМ greenfield development
+globs:
+alwaysApply: true
+---
+
+# AI-МАТНОРМ Cursor Rules
+
+1. Build the system from scratch using the documents in `/docs` and `/prompts`.
+2. Do not import the old MVP as production architecture.
+3. Keep backend, frontend, desktop, infra and docs separated.
+4. Use typed schemas for all API boundaries.
+5. All LLM outputs must be validated against Pydantic/JSON Schema.
+6. All long-running jobs must use a job queue and progress events.
+7. All calculations must be deterministic and explainable.
+8. Every extracted fact must include source evidence.
+9. Never store API keys in frontend or logs.
+10. Update tests and docs after each implementation step.

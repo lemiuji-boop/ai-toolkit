@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+*.db
+
+# Node
+node_modules/
+dist/
+
+# Env & secrets
+.env
+*.secret
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Runtime / uploads
+storage/
+demo/

@@ -1,0 +1,60 @@
+<!--
+Copyright 2026 Rinat Ishmaev
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+{% extends "admin/base.html" %}
+{% block title %}Пользователи — Админ{% endblock %}
+{% block content %}
+<h1>Пользователи приложения</h1>
+<div class="card">
+  <h2>Добавить пользователя</h2>
+  <form method="post" action="/admin/users">
+    <label>Логин</label>
+    <input name="username" required>
+    <label>Пароль</label>
+    <input name="password" type="password" required>
+    <label>ФИО</label>
+    <input name="display_name" required>
+    <label>Табельный №</label>
+    <input name="tab_number">
+    <button class="btn" type="submit">Создать</button>
+  </form>
+</div>
+<div class="card">
+  <table>
+    <tr><th>ID</th><th>Логин</th><th>ФИО</th><th>Таб. №</th><th>Статус</th><th>Действия</th></tr>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.id }}</td>
+      <td>{{ u.username }}</td>
+      <td>{{ u.display_name }}</td>
+      <td>{{ u.tab_number }}</td>
+      <td>
+        {% if u.is_blocked %}<span class="badge blocked">заблокирован</span>
+        {% else %}<span class="badge ok">активен</span>{% endif %}
+      </td>
+      <td>
+        <form method="post" action="/admin/users/{{ u.id }}/toggle-block" style="display:inline">
+          <button class="btn btn-secondary" type="submit">{% if u.is_blocked %}Разблок.{% else %}Блок.{% endif %}</button>
+        </form>
+        <form method="post" action="/admin/users/{{ u.id }}/delete" style="display:inline" onsubmit="return confirm('Удалить пользователя?')">
+          <button class="btn btn-danger" type="submit">Удалить</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

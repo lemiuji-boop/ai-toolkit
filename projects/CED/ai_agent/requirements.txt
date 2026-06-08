@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pydantic>=2.7
+pydantic-settings
+celery
+redis
+pdfplumber
+pymupdf
+httpx
+pdf2image
+pytesseract
+spacy
+python-multipart

@@ -35,6 +35,44 @@ A multi-stage content studio for stories about impossible places. A Next.js dash
 - `services/api/` - API, agents, and persistence
 - `infra/` - local infrastructure
 
+## KTO AI Rewriter
+
+A portable AI rewriting editor with an Electron shell, a local Node.js server, admin-managed provider settings, and Windows helper scripts for checking the environment and building a portable executable.
+
+- `server.js` - provider configuration, admin sessions, and rewrite API
+- `main.js` - Electron entry point
+- `index.html` - browser UI
+- `*.cmd` - Windows launch, diagnostics, and packaging helpers
+
+## CED
+
+A document/catalog processing platform with separate backend, web client, desktop client, deployment scripts, and an AI-agent service. Docker Compose and LAN/server deployment variants are included for local and networked setups.
+
+- `backend/` - FastAPI service, migrations, workers, and tests
+- `web_client/` - Vue/Vite web interface
+- `desktop_client/` - .NET desktop and gateway components
+- `ai_agent/` - auxiliary AI-agent service
+- `docs/deployment/` - deployment runbooks and acceptance notes
+
+## AI-MATNORM
+
+A technologist assistant for construction-document analysis, OCR/LLM extraction, KSI handling, material-norm calculations, and Excel-oriented workflows.
+
+- `backend/` - FastAPI application, domain services, and tests
+- `frontend/` - Vue 3 + TypeScript UI
+- `desktop/` - Tauri desktop shell
+- `infra/` - PostgreSQL, Redis, and MinIO local infrastructure
+- `docs/` - technical specification, traceability, deployment, and acceptance materials
+
+## NTI.Sbor
+
+An Android-first application for collecting actual labor intensity of manufacturing operations, with a FastAPI backend for synchronization and administrative workflows.
+
+- `android/` - Kotlin, Jetpack Compose, Room, and product/demo build variants
+- `backend/` - FastAPI synchronization backend
+- `docs/` - Android technical specification, networking, and traceability notes
+- `start.sh` - local Docker-based startup helper
+
 ## Selection Notes
 
 The source workspace contained additional prototypes. This public collection keeps projects with the clearest product boundary, setup instructions, and verification path. Private data, local environments, generated assets, compiled applications, and experimental duplicates were deliberately omitted.

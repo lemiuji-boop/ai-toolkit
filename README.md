@@ -4,7 +4,7 @@ Production-oriented AI applications built around local models, human review, mea
 
 ![AI Toolkit architecture](docs/images/toolkit-architecture.svg)
 
-This curated monorepo contains four independent working projects:
+This curated monorepo contains eight independent working projects:
 
 | Project | What it does | Stack |
 | --- | --- | --- |
@@ -12,6 +12,10 @@ This curated monorepo contains four independent working projects:
 | [Local LLM Channel](projects/local-llm-channel) | Benchmarks Ollama models and turns results into reviewed Telegram content | Python, Ollama, SQLAlchemy |
 | [Neuropoligon](projects/neuropoligon) | Teaches AI concepts through interactive cross-platform lessons | Kotlin Multiplatform, Compose |
 | [Impossible Travel](projects/impossible-travel) | Orchestrates a virtual travel-content studio with generation and review stages | Next.js, FastAPI, Celery |
+| [KTO AI Rewriter](projects/kto_ai_rewriter_electron_portable_v4_3_ubuntu_build) | Portable AI rewriting editor with admin-managed providers and Electron packaging scripts | Node.js, Electron |
+| [CED](projects/CED) | Catalog/document processing platform with web, desktop, backend, and AI-agent components | FastAPI, Vue, .NET |
+| [AI-MATNORM](projects/ai_matnorm_greenfield_cursor) | Technologist assistant for construction-document analysis, OCR/LLM processing, and material norms | FastAPI, Vue, Tauri |
+| [NTI.Sbor](projects/НТИ) | Android-first app for collecting actual labor intensity of manufacturing operations | Kotlin, Compose, FastAPI |
 
 ## Why These Projects
 
@@ -68,7 +72,11 @@ ai-toolkit/
 │   ├── task-feasibility/
 │   ├── local-llm-channel/
 │   ├── neuropoligon/
-│   └── impossible-travel/
+│   ├── impossible-travel/
+│   ├── kto_ai_rewriter_electron_portable_v4_3_ubuntu_build/
+│   ├── CED/
+│   ├── ai_matnorm_greenfield_cursor/
+│   └── НТИ/
 ├── docs/
 └── .github/workflows/
 ```

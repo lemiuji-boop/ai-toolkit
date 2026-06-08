@@ -1,0 +1,60 @@
+# Copyright 2026 Rinat Ishmaev
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Windows Build
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build CED packages
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy -Scope Process Bypass
+          ./build/windows/build-all.ps1
+
+      - name: Upload CED-Server artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CED-Server
+          path: dist/CED-Server/
+          if-no-files-found: error
+
+      - name: Upload CED-Client artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CED-Client
+          path: dist/CED-Client/KdCatalog.exe
+          if-no-files-found: error

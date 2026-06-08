@@ -1,0 +1,62 @@
+{
+  "name": "kto-ai-rewriter-desktop",
+  "version": "4.3.0",
+  "description": "KTO AI question rewriter: portable desktop + local guest access",
+  "main": "main.js",
+  "private": true,
+  "author": "Aviation Interiors internal tool",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "server": "node server.js",
+    "dist:portable": "electron-builder build --win portable --x64 --publish=never",
+    "dist:dir": "electron-builder build --win dir --x64 --publish=never",
+    "dist:setup": "electron-builder build --win nsis --x64 --publish=never",
+    "dist:win:portable": "electron-builder build --win portable --x64 --publish=never",
+    "dist:linux:appimage": "electron-builder build --linux AppImage --x64 --publish=never"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "31.7.7",
+    "electron-builder": "24.13.3"
+  },
+  "build": {
+    "appId": "ru.aviainteriors.kto-ai-rewriter",
+    "productName": "KTO AI Editor",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "server.js",
+      "index.html",
+      "README.md",
+      "assets/**/*",
+      "scripts/**/*",
+      "*.cmd",
+      "*.url"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "KTO_AI_Editor_Portable_${version}_${arch}.${ext}"
+    },
+    "portable": {
+      "artifactName": "KTO_AI_Editor_Portable_${version}_${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

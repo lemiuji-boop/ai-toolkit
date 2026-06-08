@@ -1,0 +1,117 @@
+# Copyright 2026 Rinat Ishmaev
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: /app
+      CATALOG_ROOT: /data/catalog
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - file_storage:/data/storage
+      - catalog_data:/data/catalog
+    # API с хоста: http://localhost/api/ (nginx). Порт 8000 не публикуем — избегаем конфликта с локальным uvicorn.
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  celery-worker:
+    build: ./backend
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: /app
+      CATALOG_ROOT: /data/catalog
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - file_storage:/data/storage
+      - catalog_data:/data/catalog
+    command: celery -A app.tasks.celery_app.celery_app worker --loglevel=INFO
+
+  celery-beat:
+    build: ./backend
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: /app
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: celery -A app.tasks.celery_app.celery_app beat --loglevel=INFO
+
+  ai-agent:
+    build: ./ai_agent
+    env_file:
+      - .env
+    environment:
+      CATALOG_ROOT: /data/catalog
+      FILE_STORAGE_ROOT: /data/storage
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - file_storage:/data/storage
+      - catalog_data:/data/catalog
+    # Не публикуем 8001 наружу — доступ только из backend по внутренней сети Docker
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001
+
+  nginx:
+    image: nginx:stable-alpine
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./web_client/dist:/usr/share/nginx/html:ro
+
+volumes:
+  postgres_data:
+  redis_data:
+  file_storage:
+  catalog_data:

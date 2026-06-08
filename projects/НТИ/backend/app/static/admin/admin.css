@@ -1,0 +1,89 @@
+/*
+ * Copyright 2026 Rinat Ishmaev
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:root {
+  --bg: #0f1419;
+  --card: #1e2329;
+  --accent: #4a9fe8;
+  --text: #e8eaed;
+  --muted: #8a939e;
+  --danger: #e57373;
+  --ok: #81c784;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+a { color: var(--accent); }
+header {
+  background: var(--card);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+header nav a { margin-right: 1rem; text-decoration: none; }
+header nav a:hover { text-decoration: underline; }
+main { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+h1, h2 { margin-top: 0; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #3a4555; }
+.muted { color: var(--muted); font-size: 0.9rem; }
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+.btn-secondary { background: #3a4555; }
+.btn-danger { background: var(--danger); }
+input, select, textarea {
+  width: 100%;
+  max-width: 480px;
+  padding: 0.5rem;
+  margin: 0.25rem 0 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #3a4555;
+  background: #121418;
+  color: var(--text);
+}
+label { display: block; margin-top: 0.5rem; }
+.flash { padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; }
+.flash.ok { background: #1b3d2a; color: var(--ok); }
+.flash.err { background: #3d1b1b; color: var(--danger); }
+.stats { display: flex; gap: 1rem; flex-wrap: wrap; }
+.stat { flex: 1; min-width: 140px; }
+.stat strong { font-size: 1.5rem; color: var(--accent); }
+.badge { padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+.badge.blocked { background: #3d1b1b; color: var(--danger); }
+.badge.ok { background: #1b3d2a; color: var(--ok); }
+.login-wrap { max-width: 360px; margin: 4rem auto; }

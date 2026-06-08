@@ -1,0 +1,13 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KdCatalog", "KdCatalog/KdCatalog.csproj", "{C1D3F8E2-1B56-4D8E-9A52-9D92FA76C123}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KdCatalog.Server", "KdCatalog.Server/KdCatalog.Server.csproj", "{D2E4A9F3-2C67-5E9F-0B63-0EA3FB87D234}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+EndGlobal

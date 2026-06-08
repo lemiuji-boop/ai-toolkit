@@ -9,6 +9,8 @@ venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.cache/
+hf_env/
 *.db
 node_modules/
 .next/
@@ -26,3 +28,4 @@ Thumbs.db
 /data/
 **/storage/generated/
 **/storage/uploads/
+**/backups/*.tar.gz

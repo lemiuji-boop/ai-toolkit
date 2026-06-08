@@ -1,0 +1,703 @@
+<!--
+Copyright 2026 Rinat Ishmaev
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ЖКТО AI-редактор вопросов</title>
+  <style>
+    :root {
+      --brand-blue: #005ba8;
+      --brand-blue-2: #0072c6;
+      --brand-dark: #0a2742;
+      --brand-navy: #073056;
+      --brand-sky: #e8f4ff;
+      --brand-cyan: #31a8e0;
+      --brand-line: #b8d8ee;
+      --bg: #f3f8fc;
+      --card: #ffffff;
+      --text: #122033;
+      --muted: #63758a;
+      --ok: #167d4a;
+      --warn: #a46300;
+      --danger: #b42318;
+      --shadow: 0 16px 40px rgba(7, 48, 86, .10);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, Arial, system-ui, sans-serif; color: var(--text); background: radial-gradient(circle at top left, #ffffff 0, var(--bg) 42%, #edf5fb 100%); }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; }
+    .topbar { position: sticky; top: 0; z-index: 20; background: linear-gradient(135deg, var(--brand-dark), var(--brand-blue)); color: #fff; box-shadow: var(--shadow); }
+    .topbar-inner { max-width: 1480px; margin: 0 auto; padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .logo-wrap { display: flex; align-items: center; gap: 14px; min-width: 260px; }
+    .logo { width: 58px; height: 58px; border-radius: 18px; background: #fff; display: grid; place-items: center; color: var(--brand-blue); box-shadow: inset 0 0 0 1px rgba(255,255,255,.5); }
+    .logo svg { width: 45px; height: 45px; }
+    .brand-title { line-height: 1.05; }
+    .brand-title strong { display: block; font-size: 18px; letter-spacing: .2px; }
+    .brand-title span { display: block; margin-top: 4px; color: #d9efff; font-size: 13px; }
+    .top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .status-pill { border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.12); color: #fff; border-radius: 999px; padding: 8px 12px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #ffd166; box-shadow: 0 0 0 3px rgba(255, 209, 102, .25); }
+    .dot.online { background: #7ce6a9; box-shadow: 0 0 0 3px rgba(124,230,169,.25); }
+    .dot.admin { background: #ffdd57; box-shadow: 0 0 0 3px rgba(255,221,87,.25); }
+    .layout { max-width: 1480px; margin: 0 auto; padding: 22px; display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 20px; }
+    .panel, .card { background: rgba(255,255,255,.92); border: 1px solid #dbeaf5; border-radius: var(--radius); box-shadow: var(--shadow); }
+    .panel { padding: 16px; height: fit-content; position: sticky; top: 94px; }
+    .card { padding: 18px; }
+    .section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+    .section-title h2, .section-title h3 { margin: 0; font-size: 17px; }
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; line-height: 1.45; }
+    .field { margin: 12px 0; }
+    .field label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; color: #456176; text-transform: uppercase; letter-spacing: .04em; }
+    input, textarea, select { width: 100%; border: 1px solid #c8ddeb; background: #fff; border-radius: 14px; padding: 11px 12px; outline: none; color: var(--text); transition: .15s; }
+    textarea { resize: vertical; min-height: 92px; line-height: 1.45; }
+    input:focus, textarea:focus, select:focus { border-color: var(--brand-cyan); box-shadow: 0 0 0 4px rgba(49,168,224,.16); }
+    .btn { border: 0; border-radius: 14px; padding: 11px 14px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; font-weight: 700; font-size: 14px; transition: .15s; white-space: nowrap; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(135deg, var(--brand-blue), var(--brand-cyan)); color: #fff; }
+    .btn.secondary { background: var(--brand-sky); color: var(--brand-navy); border: 1px solid #c5dff1; }
+    .btn.ghost { background: transparent; color: var(--brand-navy); border: 1px solid #c5dff1; }
+    .btn.danger { background: #fff1f0; color: var(--danger); border: 1px solid #ffd2cc; }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+    .tab { padding: 10px; border-radius: 14px; border: 1px solid #c5dff1; background: #fff; color: var(--brand-navy); font-weight: 800; }
+    .tab.active { background: var(--brand-blue); color: #fff; border-color: var(--brand-blue); }
+    .work { display: flex; flex-direction: column; gap: 16px; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .stats { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 7px 10px; background: #eef6fc; color: #315d7e; font-size: 12px; font-weight: 800; }
+    .pill.ok { background: #e9f8ef; color: var(--ok); }
+    .pill.warn { background: #fff5df; color: var(--warn); }
+    .pill.bad { background: #fff1f0; color: var(--danger); }
+    .row-card { border: 1px solid #d6e7f2; border-radius: 20px; background: #fff; overflow: hidden; }
+    .row-head { padding: 12px 14px; background: linear-gradient(90deg, #f6fbff, #fff); border-bottom: 1px solid #e1edf5; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .row-main { padding: 14px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 14px; }
+    .row-main textarea { min-height: 170px; }
+    .quality { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+    .notice { border-radius: 18px; padding: 13px 14px; border: 1px solid #c5dff1; background: #f6fbff; color: #315d7e; line-height: 1.5; }
+    .notice.warn { background: #fff9ea; border-color: #f7daa2; color: #754b00; }
+    .notice.bad { background: #fff5f3; border-color: #ffd2cc; color: var(--danger); }
+    .history-list { display: grid; gap: 10px; max-height: 640px; overflow: auto; padding-right: 3px; }
+    .history-item { border: 1px solid #d6e7f2; border-radius: 18px; padding: 12px; background: #fff; }
+    .history-item pre { white-space: pre-wrap; font-size: 12px; line-height: 1.45; background: #f6fbff; border-radius: 12px; padding: 10px; max-height: 180px; overflow: auto; }
+    .settings-grid { display: grid; gap: 12px; }
+    .provider-card { border: 1px solid #d6e7f2; border-radius: 18px; padding: 14px; background: #fff; }
+    .provider-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    .provider-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(7,48,86,.52); backdrop-filter: blur(6px); }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(520px, 100%); background: #fff; border-radius: 24px; padding: 20px; box-shadow: 0 28px 70px rgba(0,0,0,.28); }
+    .import-box { display: grid; grid-template-columns: minmax(0,1fr) 330px; gap: 16px; }
+    .hidden { display: none !important; }
+    .footer-note { padding: 0 22px 24px; max-width: 1480px; margin: 0 auto; }
+    .switch { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+    .switch input { width: auto; }
+    @media (max-width: 1050px) {
+      .layout { grid-template-columns: 1fr; }
+      .panel { position: static; }
+      .row-main, .import-box, .provider-fields { grid-template-columns: 1fr; }
+      .tabs { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 620px) {
+      .topbar-inner { align-items: flex-start; flex-direction: column; }
+      .layout { padding: 14px; }
+      .logo-wrap { min-width: 0; }
+      .toolbar { align-items: stretch; }
+      .btn-row, .top-actions { width: 100%; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="logo-wrap">
+          <div class="logo" title="Авиационные интерьеры">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M11 72 L46 13 c2.2-3.8 7.6-3.8 9.8.1L89 72H74L62 51H39L27 72H11Z" fill="#005ba8"/>
+              <path d="M45 41h12L51 28 45 41Z" fill="#31a8e0"/>
+              <path d="M29 78h42v9H29z" fill="#073056"/>
+              <path d="M12 88h76" stroke="#31a8e0" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="brand-title">
+            <strong>Авиационные интерьеры</strong>
+            <span>ЖКТО AI‑редактор вопросов по ЕСКД / ЕСТД</span>
+          </div>
+        </div>
+        <div class="top-actions">
+          <span class="status-pill"><span id="serverDot" class="dot"></span><span id="serverStatus">проверка сервера</span></span>
+          <span class="status-pill"><span id="roleDot" class="dot"></span><span id="roleStatus">гость</span></span>
+          <span class="status-pill" title="Ссылка для пользователей"><span>🔗</span><span id="guestLinkText">ссылка готовится</span></span>
+          <button class="btn secondary" id="copyGuestLinkBtn">Скопировать ссылку гостя</button>
+          <button class="btn secondary" id="adminBtn">Администратор</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel">
+        <div class="section-title"><h2>Параметры обработки</h2></div>
+        <div class="field">
+          <label>AI‑провайдер</label>
+          <select id="providerSelect"></select>
+          <p class="small muted" id="providerHint">Ключи скрыты от гостей и хранятся на сервере.</p>
+        </div>
+        <div class="field">
+          <label>Автор по умолчанию</label>
+          <input id="defaultAuthor" value="Фамилия И.О." />
+        </div>
+        <div class="field">
+          <label>Дополнительные правила</label>
+          <textarea id="extraRules"></textarea>
+        </div>
+        <div class="notice small">
+          Гости не проходят авторизацию. Они сразу попадают в общую рабочую область и могут редактировать вопросы. Настройки API‑ключей открываются только после ввода пароля администратора.
+        </div>
+      </aside>
+
+      <section class="work">
+        <div class="card">
+          <div class="toolbar">
+            <div>
+              <h2 style="margin:0 0 6px">Рабочая область</h2>
+              <div class="stats">
+                <span class="pill" id="statRows">строк: 0</span>
+                <span class="pill" id="statSelected">выбрано: 0</span>
+                <span class="pill ok" id="statDone">готово: 0</span>
+                <span class="pill bad" id="statErrors">ошибок: 0</span>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn primary" id="processSelectedBtn">Обработать выбранные</button>
+              <button class="btn secondary" id="demoBtn">Демо без API</button>
+              <button class="btn ghost" id="addRowBtn">+ Строка</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="editor">Редактор</button>
+          <button class="tab" data-tab="import">Импорт</button>
+          <button class="tab" data-tab="history">История</button>
+          <button class="tab" data-tab="settings">Настройки</button>
+        </div>
+
+        <div id="editorTab" class="tab-page"></div>
+
+        <div id="importTab" class="tab-page hidden">
+          <div class="card import-box">
+            <div>
+              <h3 style="margin-top:0">Вставка вопросов</h3>
+              <p class="muted">Можно вставить вопросы построчно. Для автора используйте формат: <b>вопрос → Tab → Фамилия И.О.</b></p>
+              <textarea id="pasteText" style="min-height:260px" placeholder="Не указан материал детали	Иванов И.И.&#10;Требуется уточнить крепление панели	Петров П.П."></textarea>
+              <div class="btn-row" style="margin-top:12px">
+                <button class="btn primary" id="importBtn">Добавить строки</button>
+                <button class="btn ghost" id="clearRowsBtn">Очистить рабочую область</button>
+              </div>
+            </div>
+            <div class="notice">
+              <b>Удобный порядок работы:</b><br><br>
+              1. Вставьте вопросы из Excel.<br>
+              2. Укажите автора, если он не подставился.<br>
+              3. Выберите провайдера.<br>
+              4. Нажмите «Обработать выбранные».<br>
+              5. Проверьте результат и экспортируйте CSV.
+            </div>
+          </div>
+        </div>
+
+        <div id="historyTab" class="tab-page hidden">
+          <div class="card">
+            <div class="section-title">
+              <h3>История использования редактора</h3>
+              <div class="btn-row">
+                <button class="btn secondary" id="exportHistoryBtn">Экспорт истории</button>
+                <button class="btn ghost" id="refreshHistoryBtn">Обновить</button>
+              </div>
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </div>
+        </div>
+
+        <div id="settingsTab" class="tab-page hidden">
+          <div id="guestSettings" class="card">
+            <h3 style="margin-top:0">Настройки API‑ключей закрыты</h3>
+            <p class="muted">Вы работаете как гость. Ключи провайдеров, их просмотр и изменение доступны только администратору по паролю.</p>
+            <button class="btn primary" id="adminBtn2">Войти как администратор</button>
+          </div>
+          <div id="adminSettings" class="card hidden">
+            <div class="section-title">
+              <h3>Администрирование провайдеров и API‑ключей</h3>
+              <div class="btn-row">
+                <button class="btn secondary" id="addProviderBtn">+ Провайдер</button>
+                <button class="btn primary" id="saveProvidersBtn">Сохранить настройки</button>
+              </div>
+            </div>
+            <div class="notice warn small" style="margin-bottom:14px">
+              Ключи и основной промпт видны только после входа администратора. На сервере они сохраняются в файле <b>server-data.json</b>. Для промышленной эксплуатации храните файл на защищенном сервере, ограничьте доступ к папке проекта и задайте сложный ADMIN_PASSWORD.
+            </div>
+
+            <div class="provider-card" style="margin-bottom:14px">
+              <div class="provider-top">
+                <div>
+                  <b>Основной промпт редактора</b>
+                  <p class="small muted" style="margin:4px 0 0">Этот промпт применяется ко всем пользователям при AI‑редактировании вопросов. Гости его не видят и не меняют.</p>
+                </div>
+                <div class="btn-row">
+                  <button class="btn ghost" id="resetMainPromptBtn">Вернуть шаблон</button>
+                  <button class="btn primary" id="saveMainPromptBtn">Сохранить промпт</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Текст основного системного промпта</label>
+                <textarea id="mainPromptAdmin" style="min-height:320px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:13px"></textarea>
+              </div>
+              <div class="notice small">
+                Дополнительные правила из левой панели добавляются к этому промпту в конце. Если нужно полностью изменить стиль редакции, меняйте именно основной промпт.
+              </div>
+            </div>
+
+            <div id="providersAdminList" class="settings-grid"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <h3>Экспорт</h3>
+            <div class="btn-row">
+              <button class="btn secondary" id="copyAllBtn">Копировать всё</button>
+              <button class="btn secondary" id="exportCsvBtn">CSV для Excel</button>
+              <button class="btn secondary" id="exportJsonBtn">JSON</button>
+            </div>
+          </div>
+          <p class="small muted">CSV использует разделитель «;», чтобы его было удобно открывать в Excel с русской локалью.</p>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer-note small muted">
+      Версия 2.1: админ‑пароль для API‑ключей и основного промпта, гостевой режим без регистрации, серверная синхронизация рабочей области, история обработки, брендовая палитра.
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="adminModal">
+    <div class="modal">
+      <div class="section-title">
+        <h3>Вход администратора</h3>
+        <button class="btn ghost" id="closeAdminModal">Закрыть</button>
+      </div>
+      <p class="muted">Введите пароль администратора. Гости не авторизуются и работают автоматически.</p>
+      <div class="field">
+        <label>Пароль администратора</label>
+        <input id="adminPassword" type="password" placeholder="Введите пароль" />
+      </div>
+      <div id="adminLoginError" class="notice bad hidden small"></div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn primary" id="adminLoginBtn">Открыть настройки</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const LOCAL_KEY = 'kto-ai-rewriter-v2-state';
+const TOKEN_KEY = 'kto-ai-admin-token';
+let serverOnline = false;
+let isAdmin = false;
+let adminToken = sessionStorage.getItem(TOKEN_KEY) || '';
+let providers = [];
+let adminProviders = [];
+let historyItems = [];
+let adminMainPrompt = '';
+let defaultMainPrompt = '';
+let state = {
+  selectedProviderId: 'deepseek',
+  defaultAuthor: 'Фамилия И.О.',
+  extraRules: 'Соблюдать официальный деловой стиль. Не добавлять лишние блоки. Классификация только: технологическая или конструктивная.',
+  rows: [],
+  updatedAt: new Date().toISOString()
+};
+let syncTimer = null;
+let running = false;
+let guestPrimaryUrl = window.location.origin;
+let guestUrls = [];
+
+function id(){ return (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(16).slice(2)); }
+function esc(s){ return String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+function fmtDate(s){ try { return new Date(s).toLocaleString('ru-RU'); } catch { return s || ''; } }
+function selectedProvider(){ return providers.find(p => p.id === state.selectedProviderId) || providers[0]; }
+function defaultRow(){ return { id:id(), selected:true, source:'', author:state.defaultAuthor || 'Фамилия И.О.', result:'', status:'draft', error:'' }; }
+function loadLocal(){ try { const data = JSON.parse(localStorage.getItem(LOCAL_KEY) || '{}'); if (data.rows) state = {...state, ...data}; } catch{} }
+function saveLocal(){ localStorage.setItem(LOCAL_KEY, JSON.stringify(state)); }
+function setTab(name){
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  ['editor','import','history','settings'].forEach(t => $(t+'Tab').classList.toggle('hidden', t !== name));
+  if (name === 'history') renderHistory();
+  if (name === 'settings') renderSettings();
+}
+async function api(path, options = {}){
+  const headers = {'Content-Type':'application/json', ...(options.headers || {})};
+  const r = await fetch(path, {...options, headers});
+  const text = await r.text();
+  let data; try { data = text ? JSON.parse(text) : {}; } catch { data = {raw:text}; }
+  if (!r.ok) throw new Error(data.error || data.raw || `Ошибка ${r.status}`);
+  return data;
+}
+function updateStatus(){
+  $('serverDot').classList.toggle('online', serverOnline);
+  $('serverStatus').textContent = serverOnline ? 'общий сервер включен' : 'локальный режим';
+  $('roleDot').classList.toggle('admin', isAdmin);
+  $('roleStatus').textContent = isAdmin ? 'администратор' : 'гость';
+  $('guestSettings').classList.toggle('hidden', isAdmin);
+  $('adminSettings').classList.toggle('hidden', !isAdmin);
+}
+async function init(){
+  loadLocal();
+  bindEvents();
+  try {
+    const data = await api('/api/state');
+    serverOnline = true;
+    state = {...state, ...data};
+    const p = await api('/api/providers'); providers = p.providers || [];
+    const h = await api('/api/history'); historyItems = h.history || [];
+    await refreshGuestLink();
+    connectEvents();
+    if (adminToken) await tryAdminRestore();
+  } catch (e) {
+    serverOnline = false;
+    providers = fallbackProviders();
+    if (!state.rows.length) state.rows = [
+      { id:id(), selected:true, source:'Не указан способ крепления кронштейна после доработки панели. Просим уточнить.', author:'Иванов И.И.', result:'', status:'draft', error:'' },
+      { id:id(), selected:true, source:'По чертежу размер отверстия не соответствует фактическому расположению закладной. Нужно исправить.', author:'Петров П.П.', result:'', status:'draft', error:'' }
+    ];
+  }
+  updateStatus(); renderAll();
+}
+function fallbackProviders(){
+  return [
+    { id:'openai', name:'OpenAI', region:'США', adapter:'openai-compatible', baseUrl:'https://api.openai.com/v1', model:'gpt-5.5', keySaved:false, enabled:true },
+    { id:'deepseek', name:'DeepSeek', region:'Китай', adapter:'openai-compatible', baseUrl:'https://api.deepseek.com', model:'deepseek-chat', keySaved:false, enabled:true },
+    { id:'qwen', name:'Alibaba Qwen / DashScope', region:'Китай', adapter:'openai-compatible', baseUrl:'https://dashscope-intl.aliyuncs.com/compatible-mode/v1', model:'qwen-plus', keySaved:false, enabled:true },
+    { id:'ollama', name:'Ollama локально', region:'локально', adapter:'openai-compatible', baseUrl:'http://localhost:11434/v1', model:'qwen2.5-coder:7b', keySaved:true, enabled:true }
+  ];
+}
+
+async function refreshGuestLink(){
+  try {
+    const info = await api('/api/network-info');
+    guestUrls = info.urls || [];
+    guestPrimaryUrl = info.primaryUrl || window.location.origin;
+  } catch {
+    guestPrimaryUrl = window.location.origin;
+    guestUrls = [{label:'Текущий адрес', url: guestPrimaryUrl}];
+  }
+  const el = $('guestLinkText');
+  if (el) el.textContent = guestPrimaryUrl.replace(/^https?:\/\//,'');
+  const settingsEl = $('guestLinkSettingsText');
+  if (settingsEl) settingsEl.textContent = guestPrimaryUrl;
+}
+function copyGuestLink(){
+  const text = guestPrimaryUrl || window.location.origin;
+  navigator.clipboard.writeText(text).then(()=>alert('Ссылка для гостей скопирована:\n' + text)).catch(()=>prompt('Скопируйте ссылку для гостей:', text));
+}
+
+function connectEvents(){
+  const es = new EventSource('/api/events');
+  es.addEventListener('state', e => { state = {...state, ...JSON.parse(e.data)}; saveLocal(); renderAll(false); });
+  es.addEventListener('providers', e => { providers = JSON.parse(e.data); renderProviderSelect(); });
+  es.addEventListener('history', e => { historyItems = JSON.parse(e.data); renderHistory(); });
+  es.onerror = () => { serverOnline = false; updateStatus(); };
+  es.onopen = () => { serverOnline = true; updateStatus(); };
+}
+async function tryAdminRestore(){
+  try {
+    const data = await api('/api/admin/providers', {headers:{'x-admin-token': adminToken}});
+    adminProviders = data.providers || [];
+    const promptData = await api('/api/admin/prompt', {headers:{'x-admin-token': adminToken}});
+    adminMainPrompt = promptData.mainPrompt || '';
+    defaultMainPrompt = promptData.defaultMainPrompt || '';
+    isAdmin = true;
+  }
+  catch { adminToken = ''; sessionStorage.removeItem(TOKEN_KEY); isAdmin = false; }
+}
+function scheduleSync(){
+  saveLocal();
+  if (!serverOnline) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    try { await api('/api/state', {method:'POST', body:JSON.stringify(state)}); } catch(e){ serverOnline = false; updateStatus(); }
+  }, 450);
+}
+function renderAll(doSync=false){ renderProviderSelect(); renderSidebar(); renderRows(); renderStats(); renderSettings(); if(doSync) scheduleSync(); }
+function renderProviderSelect(){
+  const sel = $('providerSelect');
+  sel.innerHTML = providers.filter(p => p.enabled !== false).map(p => `<option value="${esc(p.id)}">${esc(p.name)} — ${esc(p.model)}${p.keySaved ? '' : ' — ключ не задан'}</option>`).join('');
+  if (providers.some(p => p.id === state.selectedProviderId)) sel.value = state.selectedProviderId;
+  const p = selectedProvider();
+  $('providerHint').textContent = p ? `${p.region || ''}; ${p.adapter || ''}; ${p.keySaved ? 'ключ сохранен на сервере' : 'ключ не задан администратором'}` : 'Провайдер не выбран';
+}
+function renderSidebar(){ $('defaultAuthor').value = state.defaultAuthor || ''; $('extraRules').value = state.extraRules || ''; }
+function renderStats(){
+  const rows = state.rows || [];
+  $('statRows').textContent = `строк: ${rows.length}`;
+  $('statSelected').textContent = `выбрано: ${rows.filter(r=>r.selected).length}`;
+  $('statDone').textContent = `готово: ${rows.filter(r=>r.status==='done').length}`;
+  $('statErrors').textContent = `ошибок: ${rows.filter(r=>r.status==='error').length}`;
+}
+function renderRows(){
+  const wrap = $('editorTab');
+  const rows = state.rows || [];
+  if (!rows.length) { wrap.innerHTML = `<div class="card notice">Рабочая область пуста. Добавьте строку или импортируйте вопросы из Excel.</div>`; return; }
+  wrap.innerHTML = rows.map((r, i) => {
+    const q = quality(r.result);
+    return `<div class="row-card" data-id="${esc(r.id)}">
+      <div class="row-head">
+        <div class="btn-row">
+          <label class="switch"><input type="checkbox" class="row-selected" ${r.selected ? 'checked' : ''}> Строка ${i+1}</label>
+          ${r.status === 'running' ? '<span class="pill warn">обработка</span>' : ''}
+          ${r.status === 'done' ? '<span class="pill ok">готово</span>' : ''}
+          ${r.status === 'error' ? '<span class="pill bad">ошибка</span>' : ''}
+        </div>
+        <button class="btn danger row-delete">Удалить</button>
+      </div>
+      <div class="row-main">
+        <div>
+          <div class="field"><label>Исходный вопрос</label><textarea class="row-source">${esc(r.source)}</textarea></div>
+          <div class="field"><label>Автор вопроса</label><input class="row-author" value="${esc(r.author)}"></div>
+          ${r.error ? `<div class="notice bad small">${esc(r.error)}</div>` : ''}
+        </div>
+        <div>
+          <div class="field"><label>Переформулированный текст</label><textarea class="row-result">${esc(r.result)}</textarea></div>
+          <div class="quality">${q.map(x => `<span class="pill ${x.ok?'ok':'warn'}">${x.ok?'✓':'!'} ${x.label}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function quality(text){
+  const s = text || '';
+  return [
+    {label:'Причина', ok:/Причина\s*:/i.test(s)},
+    {label:'Предложение/Содержание', ok:/Предложение\s*\/\s*Содержание\s*:/i.test(s)},
+    {label:'Классификация', ok:/Классификация вопроса\s*:/i.test(s)},
+    {label:'Исполнитель', ok:/Исполнитель\s*:/i.test(s)},
+    {label:'инженер-технолог', ok:/инженер-технолог/i.test(s)},
+    {label:'тип', ok:/(технологическая|конструктивная)/i.test(s)}
+  ];
+}
+function updateRow(id, patch){ state.rows = state.rows.map(r => r.id === id ? {...r, ...patch} : r); renderStats(); scheduleSync(); }
+function bindEvents(){
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+  $('providerSelect').addEventListener('change', e => { state.selectedProviderId = e.target.value; renderProviderSelect(); scheduleSync(); });
+  $('defaultAuthor').addEventListener('input', e => { state.defaultAuthor = e.target.value; scheduleSync(); });
+  $('extraRules').addEventListener('input', e => { state.extraRules = e.target.value; scheduleSync(); });
+  $('addRowBtn').addEventListener('click', () => { state.rows.push(defaultRow()); renderRows(); renderStats(); scheduleSync(); });
+  $('clearRowsBtn').addEventListener('click', () => { if(confirm('Очистить все строки рабочей области?')) { state.rows = []; renderRows(); renderStats(); scheduleSync(); } });
+  $('importBtn').addEventListener('click', importRows);
+  $('processSelectedBtn').addEventListener('click', processSelected);
+  $('demoBtn').addEventListener('click', demoRewrite);
+  $('copyAllBtn').addEventListener('click', copyAll);
+  $('exportCsvBtn').addEventListener('click', exportCsv);
+  $('exportJsonBtn').addEventListener('click', () => download('kto-editor-state.json', JSON.stringify(state, null, 2), 'application/json'));
+  $('exportHistoryBtn').addEventListener('click', () => download('kto-editor-history.json', JSON.stringify(historyItems, null, 2), 'application/json'));
+  $('refreshHistoryBtn').addEventListener('click', fetchHistory);
+  $('adminBtn').addEventListener('click', openAdminModal);
+  $('copyGuestLinkBtn').addEventListener('click', copyGuestLink); $('adminBtn2').addEventListener('click', openAdminModal);
+  $('closeAdminModal').addEventListener('click', () => $('adminModal').classList.remove('open'));
+  $('adminLoginBtn').addEventListener('click', adminLogin);
+  $('addProviderBtn').addEventListener('click', () => { adminProviders.push({id:id(),name:'Новый сервис',region:'дополнительный',adapter:'openai-compatible',baseUrl:'',model:'',apiKey:'',enabled:true}); renderSettings(); });
+  $('saveProvidersBtn').addEventListener('click', saveAdminProviders);
+  $('saveMainPromptBtn').addEventListener('click', saveMainPrompt);
+  $('resetMainPromptBtn').addEventListener('click', resetMainPrompt);
+  $('mainPromptAdmin').addEventListener('input', e => { adminMainPrompt = e.target.value; });
+  $('editorTab').addEventListener('input', onEditorInput);
+  $('editorTab').addEventListener('change', onEditorChange);
+  $('editorTab').addEventListener('click', onEditorClick);
+  $('providersAdminList').addEventListener('input', onProviderInput);
+  $('providersAdminList').addEventListener('change', onProviderInput);
+  $('providersAdminList').addEventListener('click', onProviderClick);
+}
+function onEditorInput(e){
+  const card = e.target.closest('.row-card'); if(!card) return;
+  const row = state.rows.find(r => r.id === card.dataset.id); if(!row) return;
+  if(e.target.classList.contains('row-source')) row.source = e.target.value;
+  if(e.target.classList.contains('row-author')) row.author = e.target.value;
+  if(e.target.classList.contains('row-result')) { row.result = e.target.value; row.status = e.target.value ? 'done' : 'draft'; }
+  renderStats(); scheduleSync();
+}
+function onEditorChange(e){
+  const card = e.target.closest('.row-card'); if(!card) return;
+  if(e.target.classList.contains('row-selected')) updateRow(card.dataset.id, {selected:e.target.checked});
+}
+function onEditorClick(e){
+  const card = e.target.closest('.row-card'); if(!card) return;
+  if(e.target.classList.contains('row-delete')) { state.rows = state.rows.filter(r => r.id !== card.dataset.id); renderRows(); renderStats(); scheduleSync(); }
+}
+function importRows(){
+  const text = $('pasteText').value.trim(); if(!text) return;
+  const rows = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean).map(line => {
+    const parts = line.split('\t').map(x=>x.trim());
+    return { id:id(), selected:true, source:parts[0] || '', author:parts[1] || state.defaultAuthor || 'Фамилия И.О.', result:'', status:'draft', error:'' };
+  });
+  state.rows.push(...rows); $('pasteText').value = ''; setTab('editor'); renderRows(); renderStats(); scheduleSync();
+}
+function guessClassification(text){
+  const s = String(text||'').toLowerCase();
+  const constructive = ['чертеж','размер','отверст','материал','креп','зазор','допуск','кд','заклад','конструкц','панел','детал','сборочн'];
+  const tech = ['операц','маршрут','сборк','изготов','оснаст','инструмент','доступ','контроль','технолог','трудоем','переход'];
+  const c = constructive.filter(w=>s.includes(w)).length, t = tech.filter(w=>s.includes(w)).length;
+  return c >= t ? 'конструктивная' : 'технологическая';
+}
+function demoResult(r){
+  const cls = guessClassification(r.source);
+  return `Причина:\nТребуется уточнение исходных данных, влияющих на корректность выполнения работ по изделию, так как в текущей формулировке отсутствует достаточная техническая определенность.\n\nПредложение/Содержание:\nПо исходному замечанию установлено: ${r.source || 'исходный вопрос не заполнен'}. Предлагается рассмотреть указанное замечание, определить необходимое техническое решение и при необходимости внести корректировку в конструкторскую или технологическую документацию с последующим согласованием в установленном порядке.\n\nКлассификация вопроса:\n${cls}\n\nИсполнитель:\nинженер-технолог ${r.author || state.defaultAuthor || 'Фамилия И.О.'}`;
+}
+function demoRewrite(){
+  state.rows = state.rows.map(r => r.selected ? {...r, result:demoResult(r), status:'done', error:''} : r);
+  addLocalHistory({type:'demo', providerName:'Демо без API', question:'Пакетная демо-обработка', result:`Обработано строк: ${state.rows.filter(r=>r.selected).length}`});
+  renderRows(); renderStats(); scheduleSync();
+}
+async function processSelected(){
+  if(running) return;
+  const ids = state.rows.filter(r=>r.selected && r.source.trim()).map(r=>r.id);
+  if(!ids.length) return alert('Нет выбранных строк с исходным вопросом.');
+  if(!serverOnline) return alert('Для реальной AI-обработки нужен запущенный server.js. В локальном режиме доступен только «Демо без API».');
+  running = true; $('processSelectedBtn').disabled = true;
+  for(const rowId of ids){
+    const row = state.rows.find(r=>r.id===rowId); if(!row) continue;
+    updateRow(rowId, {status:'running', error:''}); renderRows();
+    try {
+      const data = await api('/api/rewrite', {method:'POST', body:JSON.stringify({providerId:state.selectedProviderId, question:row.source, author:row.author, extraRules:state.extraRules})});
+      updateRow(rowId, {result:data.text, status:'done', error:''});
+    } catch(e) { updateRow(rowId, {status:'error', error:e.message}); }
+    renderRows();
+  }
+  running = false; $('processSelectedBtn').disabled = false; scheduleSync();
+}
+async function addLocalHistory(item){
+  const entry = {id:id(), at:new Date().toISOString(), ...item};
+  historyItems.unshift(entry); historyItems = historyItems.slice(0,200);
+  try { if(serverOnline) await api('/api/history', {method:'POST', body:JSON.stringify(entry)}); } catch {}
+}
+async function fetchHistory(){ try { const h = await api('/api/history'); historyItems = h.history || []; renderHistory(); } catch(e){ alert(e.message); } }
+function renderHistory(){
+  const box = $('historyList');
+  if(!historyItems.length){ box.innerHTML = '<div class="notice">История пока пуста.</div>'; return; }
+  box.innerHTML = historyItems.map(h => `<div class="history-item">
+    <div class="btn-row" style="justify-content:space-between"><b>${esc(h.providerName || h.type || 'Запись')}</b><span class="pill">${esc(fmtDate(h.at))}</span></div>
+    <p class="small muted"><b>Автор:</b> ${esc(h.author || '—')}</p>
+    <p class="small"><b>Вопрос:</b> ${esc(h.question || '—')}</p>
+    <pre>${esc(h.result || '')}</pre>
+  </div>`).join('');
+}
+function renderSettings(){
+  updateStatus();
+  if(!isAdmin) return;
+  const promptBox = $('mainPromptAdmin');
+  if (promptBox && document.activeElement !== promptBox) promptBox.value = adminMainPrompt || '';
+  const list = $('providersAdminList');
+  list.innerHTML = adminProviders.map((p, i) => `<div class="provider-card" data-index="${i}">
+    <div class="provider-top">
+      <b>${esc(p.name || 'Провайдер')}</b>
+      <label class="switch"><input type="checkbox" data-field="enabled" ${p.enabled !== false ? 'checked' : ''}> включен</label>
+    </div>
+    <div class="provider-fields">
+      <div class="field"><label>Название</label><input data-field="name" value="${esc(p.name)}"></div>
+      <div class="field"><label>Регион</label><input data-field="region" value="${esc(p.region)}"></div>
+      <div class="field"><label>Adapter</label><select data-field="adapter"><option value="openai-compatible" ${p.adapter==='openai-compatible'?'selected':''}>OpenAI-compatible</option><option value="anthropic" ${p.adapter==='anthropic'?'selected':''}>Anthropic Messages</option><option value="gemini" ${p.adapter==='gemini'?'selected':''}>Gemini generateContent</option></select></div>
+      <div class="field"><label>Model</label><input data-field="model" value="${esc(p.model)}"></div>
+      <div class="field"><label>Base URL</label><input data-field="baseUrl" value="${esc(p.baseUrl)}"></div>
+      <div class="field"><label>API key / token</label><input data-field="apiKey" value="${esc(p.apiKey)}" type="text" autocomplete="off"></div>
+    </div>
+    <div class="btn-row"><button class="btn danger provider-delete">Удалить провайдер</button></div>
+  </div>`).join('');
+}
+function onProviderInput(e){
+  const card = e.target.closest('.provider-card'); if(!card) return;
+  const p = adminProviders[Number(card.dataset.index)]; if(!p) return;
+  const field = e.target.dataset.field;
+  if(!field) return;
+  p[field] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+}
+function onProviderClick(e){
+  const card = e.target.closest('.provider-card'); if(!card) return;
+  if(e.target.classList.contains('provider-delete')) { adminProviders.splice(Number(card.dataset.index),1); renderSettings(); }
+}
+function openAdminModal(){ $('adminLoginError').classList.add('hidden'); $('adminModal').classList.add('open'); $('adminPassword').focus(); }
+async function adminLogin(){
+  try {
+    const data = await api('/api/admin/login', {method:'POST', body:JSON.stringify({password:$('adminPassword').value})});
+    adminToken = data.token; sessionStorage.setItem(TOKEN_KEY, adminToken); isAdmin = true;
+    const full = await api('/api/admin/providers', {headers:{'x-admin-token': adminToken}});
+    adminProviders = full.providers || [];
+    const promptData = await api('/api/admin/prompt', {headers:{'x-admin-token': adminToken}});
+    adminMainPrompt = promptData.mainPrompt || '';
+    defaultMainPrompt = promptData.defaultMainPrompt || '';
+    $('adminModal').classList.remove('open'); $('adminPassword').value = ''; setTab('settings'); updateStatus(); renderSettings();
+  } catch(e) { $('adminLoginError').textContent = e.message; $('adminLoginError').classList.remove('hidden'); }
+}
+async function saveMainPrompt(){
+  try {
+    const text = $('mainPromptAdmin').value.trim();
+    if(!text) return alert('Основной промпт не должен быть пустым.');
+    const data = await api('/api/admin/prompt', {method:'POST', headers:{'x-admin-token': adminToken}, body:JSON.stringify({mainPrompt:text})});
+    adminMainPrompt = data.mainPrompt || text;
+    defaultMainPrompt = data.defaultMainPrompt || defaultMainPrompt;
+    renderSettings();
+    alert('Основной промпт редактора сохранен.');
+  } catch(e){ alert(e.message); }
+}
+async function resetMainPrompt(){
+  if(!confirm('Вернуть основной промпт редактора к шаблону по умолчанию?')) return;
+  try {
+    const data = await api('/api/admin/prompt', {method:'POST', headers:{'x-admin-token': adminToken}, body:JSON.stringify({reset:true})});
+    adminMainPrompt = data.mainPrompt || data.defaultMainPrompt || '';
+    defaultMainPrompt = data.defaultMainPrompt || defaultMainPrompt;
+    renderSettings();
+    alert('Основной промпт возвращен к шаблону по умолчанию.');
+  } catch(e){ alert(e.message); }
+}
+async function saveAdminProviders(){
+  try {
+    const data = await api('/api/admin/providers', {method:'POST', headers:{'x-admin-token': adminToken}, body:JSON.stringify({providers:adminProviders})});
+    adminProviders = data.providers || [];
+    const p = await api('/api/providers'); providers = p.providers || [];
+    renderAll(); alert('Настройки провайдеров сохранены.');
+  } catch(e){ alert(e.message); }
+}
+function copyAll(){
+  const text = state.rows.map((r,i)=>`#${i+1}\nИсходный вопрос: ${r.source}\nАвтор: ${r.author}\n\n${r.result || '—'}`).join('\n\n---\n\n');
+  navigator.clipboard.writeText(text).then(()=>alert('Скопировано.')).catch(()=>alert('Не удалось скопировать.'));
+}
+function csvEscape(v){ return `"${String(v ?? '').replace(/"/g,'""')}"`; }
+function exportCsv(){
+  const lines = [['Исходный вопрос','Автор','Переформулированный текст','Статус','Ошибка'], ...state.rows.map(r=>[r.source,r.author,r.result,r.status,r.error])];
+  download('kto-questions-rewritten.csv', lines.map(row=>row.map(csvEscape).join(';')).join('\n'), 'text/csv;charset=utf-8');
+}
+function download(name, text, mime){ const blob = new Blob([text], {type:mime}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url); }
+
+init();
+</script>
+</body>
+</html>

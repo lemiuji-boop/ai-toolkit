@@ -1,0 +1,77 @@
+<!--
+Copyright 2026 Rinat Ishmaev
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+{% extends "admin/base.html" %}
+{% block title %}Подключения — Админ{% endblock %}
+{% block content %}
+<h1>Подключения API и Ollama</h1>
+<div class="card">
+  <h2>Ollama</h2>
+  <form method="post" action="/admin/settings/ollama">
+    <label>Базовый URL Ollama</label>
+    <input name="ollama_base_url" value="{{ ollama_base_url }}" required>
+    <label>Активная модель</label>
+    <select name="active_ollama_model">
+      {% for m in ollama_models %}
+      <option value="{{ m.model_name }}" {% if m.is_active %}selected{% endif %}>{{ m.model_name }}</option>
+      {% endfor %}
+    </select>
+    <label>URL для мобильного клиента (сборка)</label>
+    <input name="mobile_public_url" value="{{ mobile_public_url }}">
+    <button class="btn" type="submit">Сохранить Ollama</button>
+  </form>
+  <form method="post" action="/admin/settings/ollama/sync" style="margin-top:1rem">
+    <button class="btn btn-secondary" type="submit">Подтянуть список моделей с Ollama</button>
+  </form>
+</div>
+<div class="card">
+  <h2>Модели Ollama (справочник)</h2>
+  <table>
+    <tr><th>Модель</th><th>Активна</th><th>Примечание</th></tr>
+    {% for m in ollama_models %}
+    <tr>
+      <td>{{ m.model_name }}</td>
+      <td>{% if m.is_active %}да{% else %}—{% endif %}</td>
+      <td>{{ m.notes }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+<div class="card">
+  <h2>Внешние API-сервисы</h2>
+  {% for svc in api_services %}
+  <form method="post" action="/admin/settings/api/{{ svc.id }}" style="margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #3a4555">
+    <h3>{{ svc.name }}</h3>
+    <label>URL</label>
+    <input name="base_url" value="{{ svc.base_url }}">
+    <label>API Key</label>
+    <input name="api_key" value="{{ svc.api_key }}" type="password" autocomplete="off">
+    <label>Описание</label>
+    <input name="description" value="{{ svc.description }}">
+    <label><input type="checkbox" name="enabled" {% if svc.enabled %}checked{% endif %}> Включён</label>
+    <button class="btn" type="submit">Сохранить</button>
+  </form>
+  {% endfor %}
+  <h3>Новый сервис</h3>
+  <form method="post" action="/admin/settings/api/new">
+    <label>Название</label>
+    <input name="name" required>
+    <label>URL</label>
+    <input name="base_url" required>
+    <button class="btn" type="submit">Добавить</button>
+  </form>
+</div>
+{% endblock %}
