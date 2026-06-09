@@ -13,6 +13,8 @@ backend/.env
 
 # Артефакты
 data/_page.png
+data/incoming/*
+!data/incoming/.gitkeep
 *.xlsx
 
 # IDE / OS

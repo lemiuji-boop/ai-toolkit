@@ -13,9 +13,9 @@ alwaysApply: true
 - Push: `scripts/gh-auth-push.sh` (нужен PAT с правом **Contents: write**).
 
 ## Проект МАТНОРМ (vertical slice)
-Путь: `projects/СРМ/` — каркас распознавания КД, расчёта норм, RAG, Excel addin.
-Правила проекта: `projects/СРМ/.cursor/rules/*.mdc`, ТЗ: `projects/СРМ/docs/TZ.md`.
+Путь: `projects/MCC/` — каркас распознавания КД, расчёта норм, RAG, Excel addin.
+Правила проекта: `projects/MCC/.cursor/rules/*.mdc`, ТЗ: `projects/MCC/docs/TZ.md`.
 Рабочая команда проверки:
 ```bash
-cd projects/СРМ/backend && ruff check . && mypy app && pytest -q
+cd projects/MCC/backend && ruff check . && mypy app && pytest -q
 ```

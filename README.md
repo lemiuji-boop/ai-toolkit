@@ -8,7 +8,7 @@ This curated monorepo contains nine independent working projects:
 
 | Project | What it does | Stack |
 | --- | --- | --- |
-| [МАТНОРМ / СРМ](projects/СРМ) | Vertical slice: vision-LLM + STEP geometry + deterministic norms + Excel addin + RAG scaffold | FastAPI, Ollama, cadquery, Office.js |
+| [МАТНОРМ / MCC](projects/MCC) | Vertical slice: vision-LLM + STEP geometry + deterministic norms + Excel addin + RAG scaffold | FastAPI, Ollama, cadquery, Office.js |
 | [Task Feasibility](projects/task-feasibility) | Routes technical tasks, applies safety guardrails, estimates cost, and generates an implementation brief | FastAPI, LangGraph, React |
 | [Local LLM Channel](projects/local-llm-channel) | Benchmarks Ollama models and turns results into reviewed Telegram content | Python, Ollama, SQLAlchemy |
 | [Neuropoligon](projects/neuropoligon) | Teaches AI concepts through interactive cross-platform lessons | Kotlin Multiplatform, Compose |
@@ -77,7 +77,7 @@ ai-toolkit/
 │   ├── kto_ai_rewriter_electron_portable_v4_3_ubuntu_build/
 │   ├── CED/
 │   ├── ai_matnorm_greenfield_cursor/
-│   ├── СРМ/
+│   ├── MCC/
 │   └── НТИ/
 ├── docs/
 └── .github/workflows/

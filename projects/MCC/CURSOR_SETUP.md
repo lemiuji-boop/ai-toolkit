@@ -1,17 +1,17 @@
-# Cursor — настройка для МАТНОРМ (projects/СРМ)
+# Cursor — настройка для МАТНОРМ (projects/MCC)
 
 ## 1. Открыть правильный workspace
 
 В Cursor: **File → Open Workspace from File…** → выбрать в корне репозитория:
 
-`ai-toolkit/matnorm-crm.code-workspace`
+`ai-toolkit/matnorm-mcc.code-workspace`
 
-Будут две папки: **МАТНОРМ (СРМ)** (основная) и корень **ai-toolkit**.
+Будут две папки: **МАТНОРМ (MCC)** (основная) и корень **ai-toolkit**.
 
 ## 2. Python
 
 ```bash
-cd projects/СРМ/backend
+cd projects/MCC/backend
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,cad]"
 ```
@@ -50,9 +50,9 @@ chmod +x scripts/gh-auth-push.sh
 ## 4. Проверка
 
 ```bash
-cd projects/СРМ/backend
+cd projects/MCC/backend
 ruff check . && mypy app && pytest -q
 uvicorn app.main:app --port 8123
 ```
 
-Правила агента: `projects/СРМ/.cursor/rules/*.mdc` и корневой `.cursor/rules/00-ai-toolkit-monorepo.mdc`.
+Правила агента: `projects/MCC/.cursor/rules/*.mdc` и корневой `.cursor/rules/00-ai-toolkit-monorepo.mdc`.
