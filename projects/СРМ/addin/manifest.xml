@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xsi:type="TaskPaneApp">
+  <!-- Замените GUID на свой (uuidgen) и URL на адрес деплоя Vercel -->
+  <Id>00000000-0000-0000-0000-000000000000</Id>
+  <Version>0.1.0</Version>
+  <ProviderName>Предприятие</ProviderName>
+  <DefaultLocale>ru-RU</DefaultLocale>
+  <DisplayName DefaultValue="МАТНОРМ-XL"/>
+  <Description DefaultValue="Распознавание КД и 3D, расчёт норм, нормоконтроль в Excel."/>
+  <Hosts><Host Name="Workbook"/></Hosts>
+  <Requirements>
+    <Sets DefaultMinVersion="1.1"><Set Name="ExcelApi" MinVersion="1.7"/></Sets>
+  </Requirements>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://your-addin.vercel.app/taskpane.html"/>
+  </DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+</OfficeApp>

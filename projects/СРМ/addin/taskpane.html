@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>МАТНОРМ-XL</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="stylesheet" href="taskpane.css">
+</head>
+<body>
+  <div class="wrap">
+    <h1>МАТНОРМ-XL</h1>
+    <p class="muted">Распознавание КД + 3D, расчёт норм, перенос в лист.</p>
+
+    <label>Адрес сервиса (Ubuntu-хост)</label>
+    <input id="backend" type="text" placeholder="https://matnorm.localdomain:8000">
+    <button id="saveBackend" class="ghost">Сохранить адрес</button>
+    <div id="status" class="status">Не подключено</div>
+
+    <hr>
+    <label>Чертёж (скан PDF/PNG)</label>
+    <input id="drawing" type="file" accept=".pdf,.png,.jpg,.jpeg">
+    <label>3D-модель (STEP, опционально)</label>
+    <input id="model3d" type="file" accept=".step,.stp">
+    <button id="run" class="primary">Распознать и рассчитать</button>
+
+    <hr>
+    <button id="write" disabled>Записать ведомость в лист</button>
+    <button id="check" class="ghost" disabled>Нормоконтроль</button>
+
+    <div id="flags" class="flags"></div>
+  </div>
+  <script src="taskpane.js"></script>
+</body>
+</html>

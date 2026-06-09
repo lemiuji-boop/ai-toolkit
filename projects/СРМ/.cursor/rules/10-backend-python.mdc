@@ -1,0 +1,15 @@
+---
+description: Правила для Python-бэкенда (FastAPI)
+globs: backend/**/*.py
+---
+
+# Бэкенд (Python / FastAPI)
+
+- Python 3.12, async/await где уместно (роуты с I/O — async).
+- Pydantic v2: все входы/выходы эндпойнтов — через схемы `app/core/schemas.py`.
+- Type hints обязательны; `mypy app` без ошибок.
+- PEP8 / ruff; комментарии в коде — на русском языке.
+- Модуль `app/services/*` = будущий отдельный сервис; публичная сигнатура функции
+  стабильна (её вызывает `app/api/jobs.py`). Менять реализацию — да, контракт — нет.
+- Тесты в `backend/tests/` без GPU и без реального LLM (мокать httpx/inference).
+- Нормативную арифметику не переносить в LLM — только в `calc.py` + `rules.json`.

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Секреты и окружение
+.env
+backend/.env
+
+# Артефакты
+data/_page.png
+*.xlsx
+
+# IDE / OS
+.DS_Store

@@ -1,0 +1,54 @@
+# Запуск бэкенда на Ubuntu-хосте.
+#
+# По умолчанию бэкенд обращается к Ollama, запущенному на ХОСТЕ (порт 11434),
+# через host.docker.internal — это надёжнее на пилоте с RTX 3060 6 ГБ, чем
+# второй контейнер ollama (дубль весов и VRAM). Так же сделано в документе 00.
+#
+# Если нужен inference отдельным GPU-контейнером (узел с большим GPU):
+#   docker compose --profile gpu up --build
+# и поменяйте INFERENCE_URL бэкенда на http://inference:11434.
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - INFERENCE_URL=http://host.docker.internal:11434
+      - VLM_MODEL=qwen3-vl:8b-instruct
+      - SETS_PER_AIRCRAFT=1
+      - CORS_ORIGINS=["https://your-addin.vercel.app","http://localhost:3000"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks: [matnorm]
+
+  # RAG-сервис нормативов (СЕРВИС-05). Поднимается вместе с backend.
+  rag:
+    build: ./services/rag
+    ports:
+      - "8020:8020"
+    environment:
+      - CHROMA_PATH=/data/chroma
+    volumes:
+      - rag_data:/data
+    networks: [matnorm]
+
+  # Локальный inference в контейнере — только для узла с GPU >= 16 ГБ.
+  inference:
+    image: ollama/ollama:latest
+    profiles: ["gpu"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+    networks: [matnorm]
+
+networks:
+  matnorm: {}
+volumes:
+  ollama: {}
+  rag_data: {}
