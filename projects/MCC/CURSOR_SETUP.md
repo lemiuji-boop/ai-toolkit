@@ -1,58 +1,45 @@
-# Cursor — настройка для МАТНОРМ (projects/MCC)
+# Cursor — настройка для МАТНОРМ (MCC)
 
-## 1. Открыть правильный workspace
+## 1. Открыть workspace
 
-В Cursor: **File → Open Workspace from File…** → выбрать в корне репозитория:
+**Рекомендуется** — workspace только проекта (без корня монорепо):
 
-`ai-toolkit/matnorm-mcc.code-workspace`
+**File → Open Workspace from File…** → `projects/MCC/mcc.code-workspace`
 
-Будут две папки: **МАТНОРМ (MCC)** (основная) и корень **ai-toolkit**.
+Альтернатива: **File → Open Folder…** → каталог `projects/MCC`.
+
+Из корня репозитория ai-toolkit также можно открыть `matnorm-mcc.code-workspace` (одна папка — MCC).
 
 ## 2. Python
 
 ```bash
-cd projects/MCC/backend
+cd backend
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,cad]"
 ```
 
 Интерпретатор подхватится из workspace: `backend/.venv/bin/python`.
 
-## 3. GitHub push (исправление 403)
+## 3. GitHub push (монорепо ai-toolkit)
 
-Текущий fine-grained PAT без **Contents: write** не может пушить.
+Push выполняется из корня репозитория `ai-toolkit`, не из `projects/MCC`.
 
-**Создать токен:** GitHub → Settings → Developer settings →
-[Personal access tokens](https://github.com/settings/tokens)
-
-- **Classic:** scope `repo`, или
-- **Fine-grained:** репозиторий `lemiuji-boop/ai-toolkit`, permission **Contents: Read and write**
-
-**Сохранить локально (не коммитить):**
+**Токен:** GitHub → Settings → Developer settings →
+[Personal access tokens](https://github.com/settings/tokens) — scope `repo` или Contents: Read and write для `lemiuji-boop/ai-toolkit`.
 
 ```bash
 mkdir -p ~/.config/ai-toolkit
-chmod 700 ~/.config/ai-toolkit
-nano ~/.config/ai-toolkit/github_token   # вставить ghp_... или github_pat_...
-chmod 600 ~/.config/ai-toolkit/github_token
-```
-
-**Push из корня ai-toolkit:**
-
-```bash
+chmod 600 ~/.config/ai-toolkit/github_token   # ghp_... или github_pat_...
 cd /path/to/ai-toolkit
-chmod +x scripts/gh-auth-push.sh
 ./scripts/gh-auth-push.sh main
 ```
-
-Или одной строкой: `export GITHUB_TOKEN=ghp_... && ./scripts/gh-auth-push.sh`
 
 ## 4. Проверка
 
 ```bash
-cd projects/MCC/backend
+cd backend
 ruff check . && mypy app && pytest -q
 uvicorn app.main:app --port 8123
 ```
 
-Правила агента: `projects/MCC/.cursor/rules/*.mdc` и корневой `.cursor/rules/00-ai-toolkit-monorepo.mdc`.
+Правила агента: `.cursor/rules/*.mdc` в этом каталоге.

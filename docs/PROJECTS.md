@@ -58,8 +58,8 @@ A document/catalog processing platform with separate backend, web client, deskto
 
 On-premise каркас «чертёж + 3D → нормы расхода → Excel»: OCR/vision через Ollama,
 геометрия STEP (cadquery), детерминированный расчёт по `rules.json`, RAG-скаффолд
-нормативов, Office.js-надстройка. Cursor: открыть `matnorm-mcc.code-workspace` в корне
-репозитория.
+нормативов, Office.js-надстройка. Cursor: открыть `projects/MCC/mcc.code-workspace`
+(или `matnorm-mcc.code-workspace` в корне ai-toolkit — только папка MCC).
 
 - `backend/` - FastAPI pipeline (`/api/jobs`, vision, geometry, calc, verify)
 - `services/rag/` - RAG нормативов (ChromaDB, `/search`)
