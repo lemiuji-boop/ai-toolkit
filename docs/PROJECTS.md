@@ -54,6 +54,19 @@ A document/catalog processing platform with separate backend, web client, deskto
 - `ai_agent/` - auxiliary AI-agent service
 - `docs/deployment/` - deployment runbooks and acceptance notes
 
+## МАТНОРМ (СРМ) — vertical slice
+
+On-premise каркас «чертёж + 3D → нормы расхода → Excel»: OCR/vision через Ollama,
+геометрия STEP (cadquery), детерминированный расчёт по `rules.json`, RAG-скаффолд
+нормативов, Office.js-надстройка. Cursor: открыть `matnorm-crm.code-workspace` в корне
+репозитория.
+
+- `backend/` - FastAPI pipeline (`/api/jobs`, vision, geometry, calc, verify)
+- `services/rag/` - RAG нормативов (ChromaDB, `/search`)
+- `addin/` - Excel taskpane (Office.js)
+- `docs/TZ.md`, `docs/trace.md` - ТЗ и трассировка FR→тест
+- `deploy/` - nginx TLS, инструкция sideload надстройки
+
 ## AI-MATNORM
 
 A technologist assistant for construction-document analysis, OCR/LLM extraction, KSI handling, material-norm calculations, and Excel-oriented workflows.

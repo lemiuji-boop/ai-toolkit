@@ -1,0 +1,21 @@
+---
+description: Правила монорепозитория ai-toolkit (всегда)
+alwaysApply: true
+---
+
+# AI Toolkit — монорепозиторий
+
+Репозиторий: https://github.com/lemiuji-boop/ai-toolkit
+
+- Каждый проект живёт в `projects/<имя>/` и независим (свой стек, README, тесты).
+- Секреты только в локальных `.env`; не коммитить токены, ключи, `.venv/`.
+- Перед push: `git status` — коммитить только файлы текущего проекта, не затрагивать соседние.
+- Push: `scripts/gh-auth-push.sh` (нужен PAT с правом **Contents: write**).
+
+## Проект МАТНОРМ (vertical slice)
+Путь: `projects/СРМ/` — каркас распознавания КД, расчёта норм, RAG, Excel addin.
+Правила проекта: `projects/СРМ/.cursor/rules/*.mdc`, ТЗ: `projects/СРМ/docs/TZ.md`.
+Рабочая команда проверки:
+```bash
+cd projects/СРМ/backend && ruff check . && mypy app && pytest -q
+```

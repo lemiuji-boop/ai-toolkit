@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "path": "projects/СРМ",
+      "name": "МАТНОРМ (СРМ)"
+    },
+    {
+      "path": ".",
+      "name": "ai-toolkit (корень)"
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder:МАТНОРМ (СРМ)}/backend/.venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/.mypy_cache": true,
+      "**/.ruff_cache": true
+    },
+    "terminal.integrated.cwd": "${workspaceFolder:МАТНОРМ (СРМ)}"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "charliermarsh.ruff"
+    ]
+  }
+}
