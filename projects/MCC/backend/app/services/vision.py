@@ -44,8 +44,21 @@ def _confidence(data: dict, dims: Dimensions) -> dict[str, float]:
     return conf
 
 
-def _stub() -> ExtractResult:
-    """Детерминированная заглушка при недоступном inference (деградация каркаса)."""
+def _stub(*, minimal: bool = False) -> ExtractResult:
+    """Детерминированная заглушка при недоступном inference (деградация каркаса).
+
+    minimal=True — пустые поля основной надписи (режим model_only без чертежа).
+    """
+    if minimal:
+        return ExtractResult(
+            designation=None,
+            name=None,
+            material=None,
+            mass_kg=None,
+            dimensions_mm=Dimensions(),
+            confidence={},
+            source="stub",
+        )
     return ExtractResult(
         designation="АБВГ.001.001",
         name="Кронштейн",

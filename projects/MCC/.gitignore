@@ -13,8 +13,14 @@ backend/.env
 
 # Артефакты
 data/_page.png
-data/incoming/*
-!data/incoming/.gitkeep
+data/incoming/drawings/*
+!data/incoming/drawings/.gitkeep
+data/incoming/models/*
+!data/incoming/models/.gitkeep
+data/incoming/pairs/*
+!data/incoming/pairs/.gitkeep
+data/examples/calc/*
+!data/examples/calc/.gitkeep
 *.xlsx
 
 # IDE / OS

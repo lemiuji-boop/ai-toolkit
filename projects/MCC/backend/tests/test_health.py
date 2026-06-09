@@ -21,6 +21,8 @@ def test_job_runs_without_model_or_llm(monkeypatch):
     r = client.post("/api/jobs", files=files)
     assert r.status_code == 200
     body = r.json()
+    assert body["mode"] == "drawing_only"
+    assert body["data_completeness"]["has_drawing"] is True
     assert body["extract"]["source"] == "stub"
     assert body["rows"] and body["rows"][0]["norm_per_part_kg"] is not None
 

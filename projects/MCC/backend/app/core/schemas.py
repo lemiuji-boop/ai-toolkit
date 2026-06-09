@@ -1,4 +1,10 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
+
+# Режимы обработки задания (гибкая загрузка данных).
+JobMode = Literal["drawing_only", "model_only", "paired"]
+JobModeRequest = Literal["auto", "drawing_only", "model_only", "paired"]
 
 
 class Dimensions(BaseModel):
@@ -41,6 +47,15 @@ class GeometryResult(BaseModel):
     is_assembly: bool = False
 
 
+class DataCompleteness(BaseModel):
+    """Какие источники переданы и использованы ли заглушки."""
+
+    has_drawing: bool = False
+    has_model3d: bool = False
+    vision_stub: bool = False
+    geometry_stub: bool = False
+
+
 class VerifyResult(BaseModel):
     ok: bool = True
     flags: list[str] = Field(default_factory=list)
@@ -63,6 +78,8 @@ class NormRow(BaseModel):
 
 class JobResult(BaseModel):
     job_id: str
+    mode: JobMode = "paired"
+    data_completeness: DataCompleteness = Field(default_factory=DataCompleteness)
     extract: ExtractResult
     geometry: GeometryResult
     verify: VerifyResult

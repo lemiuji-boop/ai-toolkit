@@ -1,31 +1,47 @@
-# Тестовые и входящие КД
+# Данные МАТНОРМ (MCC)
 
-## Синтетика (smoke-тест)
-- `drawing.png` — минимальный PNG для проверки заглушки/конвейера
-- `part.step` — бокс 180×90×24 мм для cadquery
-
-## Входящие файлы от пользователя
-Положите пару «чертёж + STEP» в каталог **`incoming/`**:
+## Структура каталогов
 
 ```text
-data/incoming/
-├── ваш_чертёж.pdf    # или .png / .jpg
-└── ваш_деталь.step   # или .stp
+data/
+├── drawing.png          # синтетика для smoke-теста
+├── part.step            # синтетика STEP (бокс 180×90×24 мм)
+├── incoming/
+│   ├── drawings/        # только чертежи (режим drawing_only)
+│   ├── models/          # только STEP/STP (режим model_only)
+│   └── pairs/           # пары с одинаковым базовым именем (режим paired)
+└── examples/
+    └── calc/            # примеры расчётов / эталонные xlsx (по мере появления)
 ```
 
-Запуск конвейера:
+## Режимы API `POST /api/jobs`
+
+| Режим (`?mode=`) | Файлы | Поведение |
+|------------------|-------|-----------|
+| `auto` (по умолчанию) | 1 или 2 | оба → `paired`; только чертёж → `drawing_only`; только 3D → `model_only` |
+| `drawing_only` | `drawing` | OCR/VLM + заглушка геометрии; сверка чертёж↔3D **не выполняется** |
+| `model_only` | `model3d` | STEP/cadquery; поля с чертежа из 3D; сверка **не выполняется** |
+| `paired` | оба | полный конвейер + перекрёстная сверка |
+
+Минимум **один** файл обязателен; иначе HTTP 422.
+
+## Куда класть входящие КД
+
+- **Пара «чертёж + STEP»** с одним именем, например `АБВГ.001.001.pdf` и `АБВГ.001.001.step` → `incoming/pairs/`
+- **Только чертежи** → `incoming/drawings/`
+- **Только 3D** → `incoming/models/`
+
+## Запуск
 
 ```bash
-./scripts/run-pipeline.sh data/incoming/ваш_чертёж.pdf data/incoming/ваш_деталь.step
+# Авто-режим по наличию файлов
+./scripts/run-pipeline.sh auto data/drawing.png data/part.step
+./scripts/run-pipeline.sh drawing_only data/incoming/drawings/деталь.pdf
+./scripts/run-pipeline.sh model_only "" data/incoming/models/деталь.step
+
+# Сканирование папки (пары по базовому имени)
+./scripts/ingest-folder.sh data/incoming/pairs
+DRY_RUN=1 ./scripts/ingest-folder.sh /path/to/комплект
 ```
 
-Или целая папка (если в ней ровно один PDF/PNG и один STEP):
-
-```bash
-FOLDER=/path/to/комплект
-DRAW=$(find "$FOLDER" -maxdepth 1 -type f \( -iname '*.pdf' -o -iname '*.png' -o -iname '*.jpg' \) | head -1)
-STEP=$(find "$FOLDER" -maxdepth 1 -type f \( -iname '*.step' -o -iname '*.stp' \) | head -1)
-./scripts/run-pipeline.sh "$DRAW" "$STEP"
-```
-
-Конфиденциальные файлы **не коммитить** — `incoming/*` в `.gitignore` (кроме `.gitkeep`).
+Конфиденциальные файлы **не коммитить** — содержимое `incoming/*` в `.gitignore`.

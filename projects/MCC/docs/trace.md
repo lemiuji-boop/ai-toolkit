@@ -15,3 +15,4 @@
 | FR-013 | Нормоконтроль | `backend/app/services/calc.py::normcontrol` | `backend/tests/test_calc.py` |
 | FR-014 | Входимость на с/к | `backend/app/services/calc.py::build_rows` | `backend/tests/test_assembly.py` |
 | FR-015 | Виды заготовки | `backend/app/data/rules.json`, `backend/app/services/calc.py` | `backend/tests/test_calc_zagotovki.py` |
+| FR-016 | Гибкая загрузка: drawing_only / model_only / paired, `mode` query, `data_completeness` | `backend/app/api/jobs.py`, `backend/app/core/schemas.py`, `backend/app/services/verify.py` | `backend/tests/test_jobs_modes.py` |
