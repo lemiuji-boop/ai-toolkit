@@ -12,6 +12,9 @@ data/
 │   └── pairs/           # пары с одинаковым базовым именем (режим paired)
 └── examples/
     └── calc/            # примеры расчётов / эталонные xlsx (по мере появления)
+
+examples/
+└── calc/                # дубликат каталога примеров на корне проекта
 ```
 
 ## Режимы API `POST /api/jobs`
@@ -35,11 +38,12 @@ data/
 
 ```bash
 # Авто-режим по наличию файлов
-./scripts/run-pipeline.sh auto data/drawing.png data/part.step
-./scripts/run-pipeline.sh drawing_only data/incoming/drawings/деталь.pdf
-./scripts/run-pipeline.sh model_only "" data/incoming/models/деталь.step
+./scripts/run-pipeline.sh --drawing data/drawing.png --model data/part.step
+./scripts/run-pipeline.sh --drawing data/incoming/drawings/деталь.pdf
+./scripts/run-pipeline.sh --model data/incoming/models/деталь.step
 
 # Сканирование папки (пары по базовому имени)
+./scripts/run-pipeline.sh --folder data/incoming/pairs
 ./scripts/ingest-folder.sh data/incoming/pairs
 DRY_RUN=1 ./scripts/ingest-folder.sh /path/to/комплект
 ```

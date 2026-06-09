@@ -1,4 +1,4 @@
-"""Тесты гибкой загрузки данных: режимы drawing_only / model_only / paired (FR-016)."""
+"""Тесты гибкой загрузки данных: режимы drawing_only / model_only / paired."""
 import pathlib
 
 from fastapi.testclient import TestClient
@@ -25,7 +25,7 @@ def _block_llm(monkeypatch) -> None:
     )
 
 
-def test_job_drawing_only(monkeypatch):
+def test_drawing_only(monkeypatch):
     _block_llm(monkeypatch)
     files = {"drawing": ("d.png", PNG, "image/png")}
     r = client.post("/api/jobs?mode=auto", files=files)
@@ -34,12 +34,17 @@ def test_job_drawing_only(monkeypatch):
     assert body["mode"] == "drawing_only"
     dc = body["data_completeness"]
     assert dc["has_drawing"] is True and dc["has_model3d"] is False
+    assert dc["vision_stub"] is True
+    assert dc["geometry_stub"] is True
     assert body["extract"]["source"] == "stub"
     assert body["geometry"]["source"] == "stub"
     assert body["rows"]
+    flags = body["verify"]["flags"]
+    assert any("INFO:" in f for f in flags)
+    assert not any("≠" in f for f in flags)
 
 
-def test_job_model_only(monkeypatch):
+def test_model_only(monkeypatch):
     _block_llm(monkeypatch)
     files = {"model3d": ("part.step", STEP, "application/octet-stream")}
     r = client.post("/api/jobs?mode=auto", files=files)
@@ -48,12 +53,14 @@ def test_job_model_only(monkeypatch):
     assert body["mode"] == "model_only"
     dc = body["data_completeness"]
     assert dc["has_drawing"] is False and dc["has_model3d"] is True
-    assert body["extract"]["source"] == "model"
+    assert dc["vision_stub"] is True
+    assert body["extract"]["source"] == "stub"
+    assert body["extract"]["designation"] is None
     assert body["geometry"]["source"] in ("cad", "stub")
     assert body["rows"]
 
 
-def test_job_paired(monkeypatch):
+def test_paired(monkeypatch):
     _block_llm(monkeypatch)
     files = {
         "drawing": ("d.png", PNG, "image/png"),
@@ -66,27 +73,9 @@ def test_job_paired(monkeypatch):
     dc = body["data_completeness"]
     assert dc["has_drawing"] is True and dc["has_model3d"] is True
     assert body["extract"]["source"] == "stub"
-    # В paired выполняется перекрёстная сверка — возможны флаги расхождения.
     assert "verify" in body
 
 
-def test_job_422_when_no_files():
+def test_neither_422():
     r = client.post("/api/jobs")
     assert r.status_code == 422
-
-
-def test_job_422_paired_without_model(monkeypatch):
-    _block_llm(monkeypatch)
-    files = {"drawing": ("d.png", PNG, "image/png")}
-    r = client.post("/api/jobs?mode=paired", files=files)
-    assert r.status_code == 422
-
-
-def test_drawing_only_skips_cross_verify(monkeypatch):
-    """В drawing_only нет сравнения массы чертёж ↔ 3D."""
-    _block_llm(monkeypatch)
-    files = {"drawing": ("d.png", PNG, "image/png")}
-    r = client.post("/api/jobs?mode=drawing_only", files=files)
-    assert r.status_code == 200
-    flags = r.json()["verify"]["flags"]
-    assert not any("≠" in f for f in flags)

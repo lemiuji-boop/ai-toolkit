@@ -1,36 +1,74 @@
 #!/usr/bin/env bash
 # Сквозной прогон конвейера МАТНОРМ через POST /api/jobs.
 # Использование:
-#   ./scripts/run-pipeline.sh [mode] [чертёж] [step]
-#   ./scripts/run-pipeline.sh auto
-#   ./scripts/run-pipeline.sh drawing_only data/drawing.png
-#   ./scripts/run-pipeline.sh paired data/drawing.png data/part.step
-#   BACKEND_URL=http://localhost:8123 DEBUG=true ./scripts/run-pipeline.sh auto data/drawing.png data/part.step
+#   ./scripts/run-pipeline.sh --drawing data/drawing.png
+#   ./scripts/run-pipeline.sh --model data/part.step
+#   ./scripts/run-pipeline.sh --drawing a.pdf --model a.step
+#   ./scripts/run-pipeline.sh --folder data/incoming/pairs
+#   ./scripts/run-pipeline.sh --mode paired --drawing a.png --model a.step
+#   BACKEND_URL=http://localhost:8123 DEBUG=true ./scripts/run-pipeline.sh --drawing data/drawing.png
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BACKEND_URL="${BACKEND_URL:-http://localhost:8123}"
 DEBUG="${DEBUG:-false}"
 
-# Разбор аргументов: первый токен — режим, если он известен.
 MODE="auto"
 DRAWING=""
 STEP=""
+FOLDER=""
 
-if [[ $# -gt 0 && "$1" =~ ^(auto|drawing_only|model_only|paired)$ ]]; then
-  MODE="$1"
-  shift
+usage() {
+  cat <<EOF
+Использование: $0 [опции]
+
+  --mode MODE       auto|drawing_only|model_only|paired (по умолчанию auto)
+  --drawing PATH    чертёж (PDF/PNG/JPG)
+  --model PATH      3D-модель (STEP/STP)
+  --folder PATH     папка с КД → делегирует ingest-folder.sh
+
+Хотя бы один из --drawing, --model или --folder обязателен.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --mode)
+      MODE="${2:?}"
+      shift 2
+      ;;
+    --drawing)
+      DRAWING="${2:?}"
+      shift 2
+      ;;
+    --model)
+      STEP="${2:?}"
+      shift 2
+      ;;
+    --folder)
+      FOLDER="${2:?}"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Неизвестный аргумент: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [[ -n "$FOLDER" ]]; then
+  exec "$ROOT/scripts/ingest-folder.sh" "$FOLDER"
 fi
 
-DRAWING="${1:-}"
-STEP="${2:-}"
-
-# Значения по умолчанию для smoke-теста в зависимости от режима.
-if [[ -z "$DRAWING" && "$MODE" != "model_only" ]]; then
-  DRAWING="$ROOT/data/drawing.png"
-fi
-if [[ -z "$STEP" && "$MODE" != "drawing_only" ]]; then
-  STEP="$ROOT/data/part.step"
+if [[ -z "$DRAWING" && -z "$STEP" ]]; then
+  echo "Ошибка: укажите --drawing, --model или --folder" >&2
+  usage >&2
+  exit 1
 fi
 
 URL="$BACKEND_URL/api/jobs?mode=$MODE"
@@ -41,24 +79,26 @@ echo "→ mode:    $MODE"
 
 CURL_ARGS=(-s -m 300)
 
-if [[ -n "$DRAWING" && -f "$DRAWING" ]]; then
+if [[ -n "$DRAWING" ]]; then
+  if [[ ! -f "$DRAWING" ]]; then
+    echo "Ошибка: чертёж не найден: $DRAWING" >&2
+    exit 1
+  fi
   echo "→ чертёж:  $DRAWING"
   CURL_ARGS+=(-F "drawing=@$DRAWING")
-elif [[ "$MODE" == "drawing_only" || "$MODE" == "paired" ]]; then
-  echo "Ошибка: чертёж не найден: ${DRAWING:-<не указан>}" >&2
-  exit 1
 else
-  echo "→ чертёж:  (не требуется)"
+  echo "→ чертёж:  (не указан)"
 fi
 
-if [[ -n "$STEP" && -f "$STEP" ]]; then
+if [[ -n "$STEP" ]]; then
+  if [[ ! -f "$STEP" ]]; then
+    echo "Ошибка: STEP не найден: $STEP" >&2
+    exit 1
+  fi
   echo "→ STEP:    $STEP"
   CURL_ARGS+=(-F "model3d=@$STEP")
-elif [[ "$MODE" == "model_only" || "$MODE" == "paired" ]]; then
-  echo "Ошибка: STEP не найден: ${STEP:-<не указан>}" >&2
-  exit 1
 else
-  echo "→ STEP:    (не требуется)"
+  echo "→ STEP:    (не указан)"
 fi
 
 RESP=$(curl "${CURL_ARGS[@]}" "$URL")

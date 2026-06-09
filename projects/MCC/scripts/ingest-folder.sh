@@ -70,9 +70,9 @@ run_job() {
     echo "(dry-run, пропуск curl)"
     return
   fi
-  local args=("$ROOT/scripts/run-pipeline.sh" "$mode")
-  [[ -n "$draw" ]] && args+=("$draw")
-  [[ -n "$step" ]] && args+=("$step")
+  local args=("$ROOT/scripts/run-pipeline.sh" "--mode" "$mode")
+  [[ -n "$draw" ]] && args+=("--drawing" "$draw")
+  [[ -n "$step" ]] && args+=("--model" "$step")
   BACKEND_URL="$BACKEND_URL" DEBUG="$DEBUG" "${args[@]}"
 }
 

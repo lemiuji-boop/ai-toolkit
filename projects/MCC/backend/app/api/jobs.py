@@ -18,17 +18,6 @@ from app.services import calc, excel_format, geometry, ocr, verify, vision
 router = APIRouter(prefix="/api")
 
 
-def _extract_from_geometry(geom: GeometryResult) -> ExtractResult:
-    """Минимальные поля с чертежа при режиме model_only (из дерева 3D)."""
-    node = geom.assembly_tree
-    return ExtractResult(
-        designation=node.designation if node else None,
-        name=node.name if node else None,
-        material=node.material if node else None,
-        source="model",
-    )
-
-
 def _resolve_mode(
     requested: JobModeRequest,
     has_drawing: bool,
@@ -99,7 +88,7 @@ async def create_job(
 
     elif resolved == "model_only":
         geom = GeometryResult(**geometry.geometry(model_bytes, None))
-        extract = _extract_from_geometry(geom)
+        extract = vision._stub(minimal=True)
 
     else:  # paired
         extract = vision.extract(drawing_bytes)
@@ -107,7 +96,7 @@ async def create_job(
         if debug:
             debug_info = ocr.preprocess(drawing_bytes)[1]
 
-    completeness.vision_stub = has_drawing and extract.source == "stub"
+    completeness.vision_stub = extract.source == "stub"
     completeness.geometry_stub = geom.source == "stub"
 
     v = verify.verify(extract, geom, mode=resolved)
