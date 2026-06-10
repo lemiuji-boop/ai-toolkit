@@ -33,3 +33,19 @@ class SearchRequest(BaseModel):
 class SearchResponse(BaseModel):
     query: str
     hits: list[Hit] = Field(default_factory=list)
+    embed_backend: str = ""
+
+
+class IngestRequest(BaseModel):
+    """Пакетная загрузка из файлов (PDF/MD/JSON). Пустые paths → corpus_paths из конфига."""
+
+    paths: list[str] = Field(default_factory=list)
+    use_default_corpus: bool = True
+    reindex: bool = False
+
+
+class IngestResponse(BaseModel):
+    indexed: int
+    total: int
+    files: list[str] = Field(default_factory=list)
+    embed_backend: str = ""

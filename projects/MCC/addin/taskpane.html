@@ -10,14 +10,33 @@
 <body>
   <div class="wrap">
     <h1>МАТНОРМ-XL</h1>
-    <p class="muted">Распознавание КД + 3D, расчёт норм, перенос в лист.</p>
+    <p class="muted">Распознавание КД + 3D, расчёт норм, каталог выгрузок.</p>
 
-    <label>Адрес сервиса (Ubuntu-хост)</label>
-    <input id="backend" type="text" placeholder="https://matnorm.localdomain:8000">
-    <button id="saveBackend" class="ghost">Сохранить адрес</button>
+    <div class="conn-row">
+      <span id="connDot" class="dot off" title="Статус связи"></span>
+      <span id="connLabel" class="conn-label">Проверка связи…</span>
+    </div>
+
+    <label>Адрес сервиса (tunnel HTTPS)</label>
+    <input id="backend" type="text" placeholder="https://….trycloudflare.com">
+    <button id="saveBackend" class="ghost">Проверить и сохранить</button>
     <div id="status" class="status">Не подключено</div>
 
     <hr>
+    <h2 class="section">Каталог данных на сервере</h2>
+    <button id="refreshCatalog" class="ghost">Обновить каталог</button>
+    <div id="catalog" class="catalog muted">Подключитесь к сервису для загрузки каталога.</div>
+
+    <hr>
+    <h2 class="section">Запрос / чат</h2>
+    <div id="chatLog" class="chat-log"></div>
+    <div class="chat-input-row">
+      <input id="chatInput" type="text" placeholder="выгрузить расчёт, каталог, help…">
+      <button id="chatSend" class="primary chat-send">→</button>
+    </div>
+
+    <hr>
+    <h2 class="section">Новый расчёт</h2>
     <label>Чертёж (скан PDF/PNG)</label>
     <input id="drawing" type="file" accept=".pdf,.png,.jpg,.jpeg">
     <label>3D-модель (STEP, опционально)</label>
@@ -28,6 +47,7 @@
     <button id="write" disabled>Записать ведомость в лист</button>
     <button id="check" class="ghost" disabled>Нормоконтроль</button>
 
+    <div id="resultPreview" class="result-preview"></div>
     <div id="flags" class="flags"></div>
   </div>
   <script src="taskpane.js"></script>

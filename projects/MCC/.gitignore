@@ -21,6 +21,27 @@ data/incoming/pairs/*
 !data/incoming/pairs/.gitkeep
 data/examples/calc/*
 !data/examples/calc/.gitkeep
+data/exports/*
+!data/exports/.gitkeep
+data/admin/*
+!data/admin/.gitkeep
+.tunnel-url
+.cloudflared.log
+.cloudflared.pid
+.admin-backend.pid
+.admin-static.pid
+.matnorm-rag.pid
+addin/lan-host.txt
+addin/config.json
+addin/matnorm-addin.zip
+addin/dist/
+data/rag/chroma/
+deploy/certs/lan.key
+deploy/certs/lan.crt
+.export-backend.log
+.export-backend.pid
+.matnorm-backend.log
+.matnorm-backend.pid
 *.xlsx
 
 # IDE / OS

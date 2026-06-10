@@ -11,10 +11,17 @@ dependencies = [
   "httpx==0.27.2",
   "openpyxl==3.1.5",
   "pymupdf==1.24.10",
+  "cryptography==43.0.1",
+  "sqlalchemy==2.0.35",
+  "aiosqlite==0.20.0",
+  "asyncpg==0.30.0",
+  "pyjwt==2.9.0",
+  "passlib[bcrypt]==1.7.4",
+  "bcrypt==4.0.1",
 ]
 [project.optional-dependencies]
 cad = ["cadquery==2.4.0", "numpy==1.26.4"]
-dev = ["pytest==8.3.3", "ruff==0.6.8", "mypy==1.11.2"]
+dev = ["pytest==8.3.3", "pytest-asyncio==0.24.0", "ruff==0.6.8", "mypy==1.11.2"]
 
 [tool.setuptools]
 packages = ["app"]
@@ -27,6 +34,18 @@ target-version = "py312"
 select = ["E", "F", "I", "UP", "B"]
 # B008 — штатный идиом FastAPI (Depends/File/Query в значениях по умолчанию)
 ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+# Готовые модули из docs/ГОТОВЫЕ_МОДУЛИ.md — не правим стиль импортов/длину строк.
+"app/db/models.py" = ["I001"]
+"app/services/llm/structured.py" = ["E501"]
+"tests/test_crypto.py" = ["I001"]
+"tests/test_db_schema.py" = ["I001"]
+"tests/test_jobs_runner.py" = ["I001"]
+"tests/test_llm_router.py" = ["I001"]
+"tests/test_llm_structured.py" = ["I001"]
+"tests/test_rules_registry.py" = ["I001"]
+"tests/test_versioning.py" = ["I001", "E702"]
 
 [tool.mypy]
 python_version = "3.12"

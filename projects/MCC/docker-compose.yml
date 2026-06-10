@@ -1,35 +1,124 @@
-# Запуск бэкенда на Ubuntu-хосте.
+# Запуск стека МАТНОРМ на Ubuntu-хосте (тестовый прогон в Docker).
+#
+# ВАЖНО: порты совпадают с хост-стеком (8123/8020/3010) — перед `docker compose up`
+# остановите процессы start-matnorm-stack.sh (см. docs/DEPLOY_READINESS.md).
 #
 # По умолчанию бэкенд обращается к Ollama, запущенному на ХОСТЕ (порт 11434),
-# через host.docker.internal — это надёжнее на пилоте с RTX 3060 6 ГБ, чем
-# второй контейнер ollama (дубль весов и VRAM). Так же сделано в документе 00.
+# через host.docker.internal (extra_hosts → host-gateway работает и на Linux).
+# Это надёжнее на пилоте с RTX 3060 6 ГБ, чем второй контейнер ollama
+# (дубль весов и VRAM).
 #
 # Если нужен inference отдельным GPU-контейнером (узел с большим GPU):
 #   docker compose --profile gpu up --build
 # и поменяйте INFERENCE_URL бэкенда на http://inference:11434.
 services:
+  # PostgreSQL — основная БД пилота (решение пользователя 2026-06-10).
+  # Пароль — в .env рядом с compose (POSTGRES_PASSWORD), не в репозитории.
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      # Публикуется на хост: бэкенд, запущенный вне Docker, ходит на localhost:5432.
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-matnorm}
+      - POSTGRES_DB=${POSTGRES_DB:-matnorm}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Задайте POSTGRES_PASSWORD в .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-matnorm} -d ${POSTGRES_DB:-matnorm}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [matnorm]
+
   backend:
     build: ./backend
     ports:
-      - "${BACKEND_PORT:-8000}:8000"
+      - "${BACKEND_PORT:-8123}:8000"
+    # Базовые значения из backend/.env; ниже — переопределения для контейнера.
+    env_file:
+      - ./backend/.env
     environment:
+      # localhost внутри контейнера — не хост; Ollama доступен через host-gateway.
       - INFERENCE_URL=http://host.docker.internal:11434
-      - VLM_MODEL=qwen3-vl:8b-instruct
-      - SETS_PER_AIRCRAFT=1
-      - CORS_ORIGINS=["https://your-addin.vercel.app","http://localhost:3000"]
+      - PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://matnorm.lan}
+      # PostgreSQL в compose (решение пользователя 2026-06-10); схема создаётся
+      # на старте через create_all (Alembic — отдельная задача T-02/T-03).
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-matnorm}:${POSTGRES_PASSWORD:?}@postgres:5432/${POSTGRES_DB:-matnorm}
+      # Пробы админ-мониторинга изнутри контейнера (https — бэкенд под TLS).
+      - BACKEND_URL=https://127.0.0.1:8000
+      - RAG_URL=http://rag:8020
+      # SEC-001: внешние провайдеры выключены, включать осознанно.
+      - ALLOW_EXTERNAL_PROVIDERS=${ALLOW_EXTERNAL_PROVIDERS:-0}
+    volumes:
+      # TLS-сертификат LAN (генерируется scripts/gen-lan-cert.sh).
+      - ./deploy/certs:/certs:ro
+      # Статика надстройки Excel (mount /addin в app/main.py).
+      - ./addin:/addin:ro
+      # Журналы админки, экспорт, входящий каталог КД.
+      - ./data:/data
+    command:
+      [
+        "uvicorn", "app.main:app",
+        "--host", "0.0.0.0", "--port", "8000",
+        "--ssl-keyfile", "/certs/lan.key",
+        "--ssl-certfile", "/certs/lan.crt",
+        "--proxy-headers",
+      ]
+    healthcheck:
+      test: ["CMD", "curl", "-fsk", "https://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks: [matnorm]
 
   # RAG-сервис нормативов (СЕРВИС-05). Поднимается вместе с backend.
   rag:
     build: ./services/rag
     ports:
-      - "8020:8020"
+      - "${RAG_PORT:-8020}:8020"
     environment:
       - CHROMA_PATH=/data/chroma
+      - PROJECT_ROOT=/app/project
+      - OLLAMA_URL=http://host.docker.internal:11434
+      - EMBED_MODEL=nomic-embed-text
+      - EMBED_BACKEND=auto
+      - AUTO_INGEST_CORPUS=true
     volumes:
       - rag_data:/data
+      - ./backend/app/data/rules.json:/app/project/backend/app/data/rules.json:ro
+      - ./docs/TZ.md:/app/project/docs/TZ.md:ro
+      - ./data/rag:/app/project/data/rag:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8020/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks: [matnorm]
+
+  # Статика админ-панели (nginx); API остаётся на backend :8123.
+  admin:
+    image: nginx:1.27-alpine
+    ports:
+      - "${ADMIN_PORT:-3010}:80"
+    volumes:
+      - ./admin:/usr/share/nginx/html:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     networks: [matnorm]
 
   # Локальный inference в контейнере — только для узла с GPU >= 16 ГБ.
@@ -52,3 +141,4 @@ networks:
 volumes:
   ollama: {}
   rag_data: {}
+  pgdata: {}

@@ -5,30 +5,34 @@ import json
 import pytest
 
 from app.services import ocr, vision
+from app.services.llm.base import ProviderInfo
+from app.services.llm.registry import set_providers_fn
 
 _HAS_FITZ = importlib.util.find_spec("fitz") is not None
 
 
-class _FakeResponse:
-    """Подделка ответа Ollama /api/chat для мокинга httpx.post."""
+class _FakeProvider:
+    def __init__(self, payload: dict):
+        self.info = ProviderInfo(
+            id=1, name="fake", kind="local", base_url="http://x",
+            model="m", enabled=True, priority=1,
+        )
+        self._payload = payload
 
-    def __init__(self, content: dict):
-        self._content = content
+    async def chat_text(self, prompt: str) -> str:
+        return json.dumps(self._payload, ensure_ascii=False)
 
-    def raise_for_status(self) -> None:
-        return None
-
-    def json(self) -> dict:
-        return {"message": {"content": json.dumps(self._content, ensure_ascii=False)}}
-
-
-def _patch_llm(monkeypatch, content: dict) -> None:
-    monkeypatch.setattr(vision.httpx, "post", lambda *a, **k: _FakeResponse(content))
+    async def chat_vision(self, prompt: str, image_b64: str) -> str:
+        return await self.chat_text(prompt)
 
 
-def test_extract_llm_success_with_confidence(monkeypatch):
-    # Модель вернула полный набор полей и уверенности (FR-001, FR-003).
-    _patch_llm(monkeypatch, {
+def _patch_provider(payload: dict) -> None:
+    set_providers_fn(lambda: [_FakeProvider(payload)])
+
+
+@pytest.mark.asyncio
+async def test_extract_llm_success_with_confidence():
+    _patch_provider({
         "designation": "АБВГ.123.456",
         "name": "Нервюра",
         "material": "АМг6",
@@ -36,18 +40,17 @@ def test_extract_llm_success_with_confidence(monkeypatch):
         "dimensions_mm": {"length": 200, "width": 120, "height": 8},
         "confidence": {"designation": 0.95, "material": 0.88},
     })
-    res = vision.extract(b"\x89PNG\r\n")
+    res = await vision.extract(b"\x89PNG\r\n")
     assert res.source == "llm"
     assert res.material == "АМг6"
     assert res.confidence["designation"] == 0.95
-    # Поля без явной уверенности от модели получают порог по умолчанию.
     assert res.confidence["mass_kg"] == vision.settings.conf_threshold
     assert "dimensions_mm" in res.confidence
 
 
-def test_fr004_unreadable_fields_stay_null(monkeypatch):
-    # Нечитаемые поля → null и НЕ попадают в confidence (FR-004).
-    _patch_llm(monkeypatch, {
+@pytest.mark.asyncio
+async def test_fr004_unreadable_fields_stay_null():
+    _patch_provider({
         "designation": "АБВГ.999.000",
         "name": None,
         "material": None,
@@ -55,7 +58,7 @@ def test_fr004_unreadable_fields_stay_null(monkeypatch):
         "dimensions_mm": {"length": None, "width": None, "height": None},
         "confidence": {"designation": 0.9},
     })
-    res = vision.extract(b"img")
+    res = await vision.extract(b"img")
     assert res.material is None
     assert res.mass_kg is None
     assert "material" not in res.confidence
@@ -64,19 +67,17 @@ def test_fr004_unreadable_fields_stay_null(monkeypatch):
     assert res.confidence["designation"] == 0.9
 
 
-def test_extract_degrades_to_stub_on_inference_error(monkeypatch):
-    # Любая ошибка inference → детерминированная заглушка (NFR-002).
-    def _boom(*a, **k):
-        raise RuntimeError("inference down")
+@pytest.mark.asyncio
+async def test_extract_raises_without_local_provider():
+    set_providers_fn(lambda: [])
+    from app.services.errors import VisionUnavailableError
 
-    monkeypatch.setattr(vision.httpx, "post", _boom)
-    res = vision.extract(b"img")
-    assert res.source == "stub"
-    assert res.material == "Д16"
+    with pytest.raises(VisionUnavailableError) as exc:
+        await vision.extract(b"img")
+    assert exc.value.code == "NO_LOCAL_PROVIDER"
 
 
 def test_ocr_preprocess_png_passthrough_and_zones():
-    # PNG проходит без растеризации; зоны локализованы (FR-002).
     png, debug = ocr.preprocess(b"\x89PNG\r\n\x1a\n")
     assert debug["source_was_pdf"] is False
     assert "title_block" in debug["zones"]
@@ -90,7 +91,6 @@ def test_ocr_detects_pdf_signature():
 
 @pytest.mark.skipif(not _HAS_FITZ, reason="PyMuPDF не установлен")
 def test_ocr_pdf_to_png_converts():
-    # Минимальный валидный PDF из одной пустой страницы → PNG-байты.
     import fitz
 
     doc = fitz.open()

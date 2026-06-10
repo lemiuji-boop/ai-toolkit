@@ -1,14 +1,11 @@
 """Детерминированный расчёт норм (по редактируемым правилам rules.json).
 Намеренно упрощён для каркаса; формулы и коэффициенты меняются нативно в rules.json.
 LLM здесь не участвует."""
-import json
-import pathlib
-
 from app.core.config import settings
 from app.core.schemas import AssemblyNode, ExtractResult, GeometryResult, NormRow
+from app.services.rules_registry import load
 
-_RULES_PATH = pathlib.Path(__file__).parent.parent / "data" / "rules.json"
-RULES = json.loads(_RULES_PATH.read_text(encoding="utf-8"))
+RULES = load()
 
 
 def _pick_zagotovka(material: str | None) -> str:

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>МАТНОРМ — Админ-панель</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Форма входа (T-16): JWT по ADMIN_USER/ADMIN_PASSWORD бэкенда -->
+  <div id="login-overlay" class="login-overlay">
+    <form id="login-form" class="card login-card">
+      <h2>МАТНОРМ — вход</h2>
+      <p class="muted">Учётные данные администратора (env ADMIN_USER / ADMIN_PASSWORD бэкенда).</p>
+      <div class="form-row">
+        <label for="login-user">Логин</label>
+        <input id="login-user" type="text" required autocomplete="username" value="admin" />
+      </div>
+      <div class="form-row">
+        <label for="login-password">Пароль</label>
+        <input id="login-password" type="password" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="primary">Войти</button>
+      <p id="login-msg" class="muted"></p>
+    </form>
+  </div>
+
+  <div id="status-bar" class="status-bar">
+    <span id="overall-status" class="overall-badge">—</span>
+    <span id="tunnel-link-wrap" class="muted">Туннель: <a id="tunnel-link" href="#" target="_blank" rel="noopener">—</a></span>
+    <span id="status-bar-time" class="muted"></span>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">МАТНОРМ</div>
+      <p class="brand-sub">Мониторинг системы</p>
+      <nav>
+        <button type="button" class="nav-btn active" data-section="dashboard">Дашборд</button>
+        <button type="button" class="nav-btn" data-section="exports">Экспорт</button>
+        <button type="button" class="nav-btn" data-section="rag">RAG</button>
+        <button type="button" class="nav-btn" data-section="jobs">Задания</button>
+        <button type="button" class="nav-btn" data-section="providers">Провайдеры ИИ</button>
+        <button type="button" class="nav-btn" data-section="clients">Подключения</button>
+        <button type="button" class="nav-btn" data-section="services">Сервисы</button>
+        <button type="button" class="nav-btn" data-section="system">Система</button>
+      </nav>
+      <div class="sidebar-footer">
+        <label for="api-url">API бэкенда</label>
+        <input id="api-url" type="url" value="http://127.0.0.1:8123" />
+        <button type="button" id="btn-refresh" class="primary">Обновить</button>
+        <button type="button" id="btn-logout">Выйти</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <h1 id="page-title">Дашборд</h1>
+        <span id="last-updated" class="muted"></span>
+      </header>
+
+      <section id="dashboard" class="panel active">
+        <div class="card progress-card">
+          <h2>Прогресс экспорта</h2>
+          <div class="progress-meta">
+            <span id="progress-label">—</span>
+            <span id="progress-percent" class="muted">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+          </div>
+          <dl id="progress-stats" class="stats inline-stats"></dl>
+        </div>
+
+        <h2 class="section-heading">Обзор сервисов</h2>
+        <div id="status-cards" class="cards"></div>
+
+        <div class="grid-2">
+          <div class="card" id="gpu-card">
+            <h2>GPU</h2>
+            <div id="gpu-gauge" class="gauge-wrap"></div>
+          </div>
+          <div class="card">
+            <h2>Сводка</h2>
+            <dl id="summary-stats" class="stats"></dl>
+          </div>
+        </div>
+      </section>
+
+      <section id="exports" class="panel">
+        <div class="card">
+          <h2>Готовые файлы экспорта</h2>
+          <p class="muted">Ссылки на сводки и результаты пакетного прогона (без обозначений изделий).</p>
+          <dl id="exports-meta" class="stats"></dl>
+          <ul id="exports-list" class="file-list"></ul>
+        </div>
+      </section>
+
+      <section id="rag" class="panel">
+        <div class="card">
+          <h2>RAG — нормативный поиск</h2>
+          <p id="rag-description" class="rag-desc muted"></p>
+          <dl id="rag-stats" class="stats"></dl>
+          <div class="rag-search">
+            <label for="rag-query">Пример запроса</label>
+            <div class="rag-search-row">
+              <input id="rag-query" type="text" placeholder="коэффициент отхода алюминий" />
+              <button type="button" id="btn-rag-search" class="primary">Искать</button>
+            </div>
+            <pre id="rag-results" class="rag-results muted">Результаты появятся здесь…</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="jobs" class="panel">
+        <div class="card">
+          <h2>Последние задания</h2>
+          <p class="muted">Отображаются только job_id и хеш входа (SEC-002).</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>job_id</th>
+                  <th>хеш входа</th>
+                  <th>режим</th>
+                  <th>полнота</th>
+                  <th>статус</th>
+                  <th>заглушки</th>
+                  <th>строк</th>
+                  <th>время</th>
+                </tr>
+              </thead>
+              <tbody id="jobs-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="providers" class="panel">
+        <div class="card">
+          <h2>Провайдеры ИИ</h2>
+          <p class="muted">
+            Ключи хранятся зашифрованными (SECRET_KEY) и показываются маскированными.
+            Конфиденциальные данные (КД) обрабатываются только локальными провайдерами (SEC-001).
+          </p>
+          <p id="providers-egress" class="muted"></p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Имя</th>
+                  <th>Тип</th>
+                  <th>base_url</th>
+                  <th>Модель</th>
+                  <th>Ключ</th>
+                  <th>Приоритет</th>
+                  <th>Статус</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="providers-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Добавить провайдера</h2>
+          <form id="provider-form" class="provider-form">
+            <div class="form-row">
+              <label for="prov-preset">Пресет</label>
+              <select id="prov-preset">
+                <option value="">— вручную —</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="prov-name">Имя *</label>
+              <input id="prov-name" type="text" required maxlength="64" placeholder="claude-main" />
+            </div>
+            <div class="form-row">
+              <label for="prov-kind">Тип</label>
+              <select id="prov-kind">
+                <option value="local">local (контур)</option>
+                <option value="external">external (внешний API)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="prov-base-url">base_url</label>
+              <input id="prov-base-url" type="url" maxlength="255" placeholder="https://api.anthropic.com" />
+            </div>
+            <div class="form-row">
+              <label for="prov-model">Модель *</label>
+              <input id="prov-model" type="text" required maxlength="128" placeholder="claude-sonnet-4" />
+            </div>
+            <div class="form-row">
+              <label for="prov-api-key">API-ключ</label>
+              <input id="prov-api-key" type="password" maxlength="512" autocomplete="off" placeholder="sk-…" />
+            </div>
+            <div class="form-row">
+              <label for="prov-priority">Приоритет (меньше = выше)</label>
+              <input id="prov-priority" type="number" min="0" max="1000" value="100" />
+            </div>
+            <button type="submit" class="primary">Добавить</button>
+            <span id="provider-form-msg" class="muted"></span>
+          </form>
+        </div>
+      </section>
+
+      <section id="clients" class="panel">
+        <div class="card">
+          <h2>Подключения клиентов</h2>
+          <p class="muted">
+            Обращения к /api/* и /addin/*. ПК с Excel выделен цветом (не-серверный IP).
+            Хранятся только IP, user-agent и последний endpoint (SEC-002).
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>IP</th>
+                  <th>Первое обращение</th>
+                  <th>Последнее обращение</th>
+                  <th>Запросов</th>
+                  <th>Последний endpoint</th>
+                  <th>User-Agent</th>
+                </tr>
+              </thead>
+              <tbody id="clients-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="services" class="panel">
+        <div id="services-detail" class="cards"></div>
+      </section>
+
+      <section id="system" class="panel">
+        <div class="card">
+          <h2>Версии и конфигурация</h2>
+          <dl id="system-info" class="stats"></dl>
+        </div>
+        <div class="card">
+          <h2>Память и CPU</h2>
+          <dl id="host-metrics" class="stats"></dl>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
